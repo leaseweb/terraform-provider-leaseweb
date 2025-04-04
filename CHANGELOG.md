@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.0](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.25.0...v1.26.0) (2025-04-04)
+
+
+### Features
+
+* added hostname and raid in dedicated server installation state ([#341](https://github.com/leaseweb/terraform-provider-leaseweb/issues/341)) ([b0523d7](https://github.com/leaseweb/terraform-provider-leaseweb/commit/b0523d78245885f5e9f449f348d98dcd3310cc0c))
+
 ## [1.24.0](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.23.1...v1.24.0) (2025-02-10)
 
 
