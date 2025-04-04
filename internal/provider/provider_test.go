@@ -1416,7 +1416,7 @@ func TestAccDedicatedServerInstallationResource(t *testing.T) {
 							callback_url = "https://example.com/callBack"
 							control_panel_id = "123456"
 							device = "SATA2TB"
-							hostname = "example.com"
+							hostname = "server.leaseweb.com"
 							password = "password"
 							post_install_script = <<-EOS
 								#!/bin/sh
@@ -1448,8 +1448,8 @@ func TestAccDedicatedServerInstallationResource(t *testing.T) {
 							]
 							raid = {
 								level = 0
-								number_of_disks = 5
-								type = "NONE"
+								number_of_disks = 2
+								type = "SW"
 							}
 						}`,
 						Check: resource.ComposeAggregateTestCheckFunc(

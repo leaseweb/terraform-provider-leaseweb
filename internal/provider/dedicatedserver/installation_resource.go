@@ -190,6 +190,7 @@ func (i *installationResource) Schema(
 			"hostname": schema.StringAttribute{
 				Description: "Hostname to be used in your installation",
 				Optional:    true,
+				Computed:    true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
@@ -331,20 +332,21 @@ func (i *installationResource) Create(
 	}
 
 	serverID := plan.DedicatedServerID.ValueString()
-	job, response, err := i.DedicatedserverAPI.InstallOperatingSystem(ctx, serverID).
+	installationJob, response, err := i.DedicatedserverAPI.InstallOperatingSystem(ctx, serverID).
 		InstallOperatingSystemOpts(*opts).Execute()
 	if err != nil {
 		utils.SdkError(ctx, &resp.Diagnostics, err, response)
 		return
 	}
 
-	err = i.waitForJobCompletion(serverID, job.GetUuid(), ctx, resp)
+	job, err := i.waitForJobAndRetrieveUntilFinished(serverID, installationJob.GetUuid(), ctx, resp)
 	if err != nil {
 		utils.ReportError(err.Error(), &resp.Diagnostics)
 		return
 	}
+	plan.ID = types.StringValue(job.GetUuid())
 
-	diags := i.syncResourceModelWithSDK(&plan, *job, ctx)
+	diags := i.syncResourceModelWithSDK(&plan, job.GetPayload(), ctx)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -389,8 +391,10 @@ func (i *installationResource) Read(
 		utils.ReportError(fmt.Sprintf("No installation jobs found for server %s", serverID), &resp.Diagnostics)
 		return
 	}
+	job := jobs[0]
+	state.ID = types.StringValue(job.GetUuid())
 
-	diags := i.syncResourceModelWithSDK(&state, jobs[0], ctx)
+	diags := i.syncResourceModelWithSDK(&state, job.GetPayload(), ctx)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -413,21 +417,19 @@ func (i *installationResource) Delete(
 ) {
 }
 
-// isJobFinished checks if the job status is "FINISHED".
-func (i *installationResource) isJobFinished(serverID, jobID string, ctx context.Context, resp *resource.CreateResponse) bool {
-	// Fetch the job status
+func (i *installationResource) getJob(serverID, jobID string, ctx context.Context, resp *resource.CreateResponse) *dedicatedserver.CurrentJob {
+	// Fetch the job
 	result, response, err := i.DedicatedserverAPI.GetJob(ctx, serverID, jobID).Execute()
 	if err != nil {
 		utils.SdkError(ctx, &resp.Diagnostics, err, response)
-		return false // Return false indicating the status couldn't be fetched
 	}
 
-	// Return true if the job status is finished
-	return result.GetStatus() == "FINISHED"
+	return result
 }
 
-// waitForJobCompletion handles polling with retry and timeout.
-func (i *installationResource) waitForJobCompletion(serverID, jobID string, ctx context.Context, resp *resource.CreateResponse) error {
+// waitForJobAndRetrieveUntilFinished handles polling with retry and timeout.
+func (i *installationResource) waitForJobAndRetrieveUntilFinished(serverID, jobID string, ctx context.Context, resp *resource.CreateResponse) (*dedicatedserver.CurrentJob, error) {
+	var job *dedicatedserver.CurrentJob
 	// Create a constant backoff with a 30-second retry interval
 	bo := backoff.NewConstantBackOff(30 * time.Second)
 
@@ -438,13 +440,16 @@ func (i *installationResource) waitForJobCompletion(serverID, jobID string, ctx 
 	// Start polling and retrying
 	for {
 		if retryCount >= maxRetries {
-			return errors.New("timed out waiting for job to finish after 60 minutes")
+			return nil, errors.New("timed out waiting for job to finish after 60 minutes")
 		}
 
-		// Call the function to check if the job is finished
-		if i.isJobFinished(serverID, jobID, ctx, resp) {
+		// Call the function to get job
+		job = i.getJob(serverID, jobID, ctx, resp)
+
+		// check if the job is finished
+		if job.GetStatus() == "FINISHED" {
 			// Job is finished, exit the loop
-			return nil
+			return job, nil
 		}
 
 		// Sleep for the backoff interval before retrying
@@ -455,16 +460,15 @@ func (i *installationResource) waitForJobCompletion(serverID, jobID string, ctx 
 
 func (i *installationResource) syncResourceModelWithSDK(
 	state *installationResourceModel,
-	job dedicatedserver.ServerJob,
+	payload dedicatedserver.ServerJobPayload,
 	ctx context.Context,
 ) diag.Diagnostics {
 	var diags diag.Diagnostics
-	payload := job.GetPayload()
-	state.ID = types.StringValue(job.GetUuid())
 	state.Device = types.StringValue(payload.GetDevice())
 	state.OperatingSystemID = types.StringValue(payload.GetOperatingSystemId())
 	state.PowerCycle = types.BoolValue(payload.GetPowerCycle())
 	state.Timezone = types.StringValue(payload.GetTimezone())
+	state.Hostname = types.StringValue(payload.GetHostname())
 
 	partitionAttributeTypes := map[string]attr.Type{
 		"filesystem": types.StringType,
@@ -491,12 +495,23 @@ func (i *installationResource) syncResourceModelWithSDK(
 	diags.Append(listDiags...)
 	state.Partitions = partitionsList
 
-	if state.Raid.IsNull() || state.Raid.IsUnknown() {
-		state.Raid = types.ObjectNull(map[string]attr.Type{
-			"level":           types.Int64Type,
-			"number_of_disks": types.Int64Type,
+	if payload.HasRaid() {
+		raidAttributeTypes := map[string]attr.Type{
+			"level":           types.Int32Type,
+			"number_of_disks": types.Int32Type,
 			"type":            types.StringType,
-		})
+		}
+
+		payloadRaid := payload.GetRaid()
+
+		raid := raidResourceModel{
+			Level:         types.Int32Value(payloadRaid.GetLevel()),
+			NumberOfDisks: types.Int32Value(payloadRaid.GetNumberOfDisks()),
+			Type:          types.StringValue(payloadRaid.GetType()),
+		}
+
+		raidObj, _ := types.ObjectValueFrom(ctx, raidAttributeTypes, raid)
+		state.Raid = raidObj
 	}
 
 	return diags
