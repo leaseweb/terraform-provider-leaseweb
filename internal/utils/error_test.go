@@ -614,7 +614,7 @@ func TestImportOnlyError(t *testing.T) {
 		"Resource can only be imported, not created.",
 		diags.Errors()[0].Summary(),
 	)
-	assert.Equal(t, "", diags.Errors()[0].Detail())
+	assert.Empty(t, diags.Errors()[0].Detail())
 }
 
 func ExampleImportOnlyError() {

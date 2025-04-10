@@ -141,7 +141,7 @@ func handleValidationError(errorDetails map[string]any, diags *diag.Diagnostics)
 		// If the key contains dots, replace the dots with "_"
 		if strings.Contains(errorKey, ".") {
 			normalizedErrorKey = strings.ToLower(
-				strings.Replace(errorKey, ".", "_", -1),
+				strings.ReplaceAll(errorKey, ".", "_"),
 			)
 		}
 		// If no dots are found, assume camel case and separate the words with "_".
