@@ -1,4 +1,4 @@
-FROM node:jod-slim@sha256:1c18d9ab3af4585870b92e4dbc5cac5a0dc77dd13df1a5905cea89fc720eb05b
+FROM node:jod-slim@sha256:157c7ea6f8c30b630d6f0d892c4f961eab9f878e88f43dd1c00514f95ceded8a
 
 RUN corepack enable \
     && corepack prepare pnpm@latest-9 --activate \
