@@ -101,7 +101,7 @@ func (l *loadBalancersDataSource) Read(
 	_ datasource.ReadRequest,
 	response *datasource.ReadResponse,
 ) {
-	var loadBalancers []publiccloud.LoadBalancerListItem
+	var loadBalancers []publiccloud.LoadBalancer
 	var offset *int32
 
 	loadBalancerRequest := l.PubliccloudAPI.GetLoadBalancerList(ctx)
