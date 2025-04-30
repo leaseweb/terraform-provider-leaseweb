@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.1](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.26.0...v1.26.1) (2025-04-30)
+
+
+### Bug Fixes
+
+* replace incorrect LoadBalancer struct with correct one ([#355](https://github.com/leaseweb/terraform-provider-leaseweb/issues/355)) ([701442b](https://github.com/leaseweb/terraform-provider-leaseweb/commit/701442bb2481d14eaa7ccf06d53f2afac67cf0f1))
+
 ## [1.26.0](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.25.0...v1.26.0) (2025-04-04)
 
 
