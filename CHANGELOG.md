@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.2](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.26.1...v1.26.2) (2025-05-28)
+
+
+### Bug Fixes
+
+* **publiccloud:** update instanceContract and termination policy handling ([#373](https://github.com/leaseweb/terraform-provider-leaseweb/issues/373)) ([a325649](https://github.com/leaseweb/terraform-provider-leaseweb/commit/a325649bb84f70244c7a23f1363c5e950976071a))
+
 ## [1.26.1](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.26.0...v1.26.1) (2025-04-30)
 
 
