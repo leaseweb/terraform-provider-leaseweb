@@ -53,6 +53,7 @@ Read-Only:
   - *3*
   - *6*
   - *12*
+  - *24*
 - `ends_at` (String)
 - `state` (String)
 - `term` (Number) Contract term (in months). Used only when type is *MONTHLY*. Valid options are 
@@ -61,6 +62,8 @@ Read-Only:
   - *3*
   - *6*
   - *12*
+  - *24*
+  - *36*
 - `type` (String) Select *HOURLY* for billing based on hourly usage, else *MONTHLY* for billing per month usage
 
 

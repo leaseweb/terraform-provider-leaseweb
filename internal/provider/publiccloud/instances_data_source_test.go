@@ -14,7 +14,7 @@ func Test_adaptContractToContractDataSource(t *testing.T) {
 		"2006-01-02 15:04:05",
 		"2023-12-14 17:09:47",
 	)
-	sdkContract := publiccloud.Contract{
+	sdkContract := publiccloud.InstanceContract{
 		BillingFrequency: publiccloud.BILLINGFREQUENCY__1,
 		EndsAt:           *publiccloud.NewNullableTime(&endsAt),
 		Term:             publiccloud.CONTRACTTERM__3,
