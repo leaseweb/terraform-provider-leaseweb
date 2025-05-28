@@ -12,18 +12,18 @@ import (
 )
 
 func Test_adaptImageDetailsToImageResource(t *testing.T) {
-	state := publiccloud.IMAGESTATE_READY
-	region := publiccloud.REGIONNAME_EU_WEST_3
+	state := publiccloud.IMAGESTATENAME_READY
+	region := publiccloud.IMAGEREGION_EU_WEST_3
 
 	sdkImageDetails := publiccloud.ImageDetails{
 		Id:           "imageId",
 		Name:         "name",
 		Custom:       true,
-		State:        *publiccloud.NewNullableImageState(&state),
+		State:        *publiccloud.NewNullableImageStateName(&state),
 		MarketApps:   []publiccloud.MarketAppId{publiccloud.MARKETAPPID_CPANEL_30},
 		StorageTypes: []publiccloud.StorageType{publiccloud.STORAGETYPE_CENTRAL},
 		Flavour:      "flavour",
-		Region:       *publiccloud.NewNullableRegionName(&region),
+		Region:       *publiccloud.NewNullableImageRegion(&region),
 	}
 
 	marketApps, _ := basetypes.NewListValueFrom(

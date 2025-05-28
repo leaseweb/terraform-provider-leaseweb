@@ -17,7 +17,7 @@ func Test_adaptLoadBalancerDetailsToLoadBalancerResource(t *testing.T) {
 			Region:    "region",
 			Type:      publiccloud.TYPENAME_C3_2XLARGE,
 			Reference: *publiccloud.NewNullableString(nil),
-			Contract: publiccloud.Contract{
+			Contract: publiccloud.InstanceContract{
 				Type: publiccloud.CONTRACTTYPE_MONTHLY,
 			},
 		}
@@ -49,7 +49,7 @@ func Test_adaptLoadBalancerDetailsToLoadBalancerResource(t *testing.T) {
 			Region:    "region",
 			Type:      publiccloud.TYPENAME_C3_2XLARGE,
 			Reference: *publiccloud.NewNullableString(&reference),
-			Contract: publiccloud.Contract{
+			Contract: publiccloud.InstanceContract{
 				Type: publiccloud.CONTRACTTYPE_MONTHLY,
 			},
 		}

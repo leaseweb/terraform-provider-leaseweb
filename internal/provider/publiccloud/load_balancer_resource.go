@@ -231,10 +231,10 @@ func (l *loadBalancerResource) Create(
 		publiccloud.RegionName(plan.Region.ValueString()),
 		publiccloud.TypeName(plan.Type.ValueString()),
 		publiccloud.ContractType(contract.Type.ValueString()),
-		publiccloud.ContractTerm(contract.Term.ValueInt32()),
-		publiccloud.BillingFrequency(contract.BillingFrequency.ValueInt32()),
 	)
 	opts.Reference = utils.AdaptStringPointerValueToNullableString(plan.Reference)
+	opts.SetContractTerm(publiccloud.ContractTerm(contract.Term.ValueInt32()))
+	opts.SetBillingFrequency(publiccloud.BillingFrequency(contract.BillingFrequency.ValueInt32()))
 
 	loadBalancer, httpResponse, err := l.PubliccloudAPI.LaunchLoadBalancer(ctx).
 		LaunchLoadBalancerOpts(*opts).
@@ -336,10 +336,13 @@ func (l *loadBalancerResource) Delete(
 		return
 	}
 
+	opts := publiccloud.NewTerminateLoadBalancerOpts("CANCEL_OTHER")
+	opts.SetReason("Terraform")
+
 	httpResponse, err := l.PubliccloudAPI.TerminateLoadBalancer(
 		ctx,
 		state.ID.ValueString(),
-	).Execute()
+	).TerminateLoadBalancerOpts(*opts).Execute()
 	if err != nil {
 		utils.SdkError(ctx, &response.Diagnostics, err, httpResponse)
 	}

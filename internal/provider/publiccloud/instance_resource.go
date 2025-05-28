@@ -48,7 +48,7 @@ func (c contractResourceModel) attributeTypes() map[string]attr.Type {
 	}
 }
 
-func adaptContractToContractResource(contract publiccloud.Contract) contractResourceModel {
+func adaptContractToContractResource(contract publiccloud.InstanceContract) contractResourceModel {
 	return contractResourceModel{
 		BillingFrequency: basetypes.NewInt32Value(int32(contract.GetBillingFrequency())),
 		Term:             basetypes.NewInt32Value(int32(contract.GetTerm())),
@@ -216,10 +216,11 @@ func (i *instanceResource) Create(
 		publiccloud.TypeName(plan.Type.ValueString()),
 		image.ID.ValueString(),
 		publiccloud.ContractType(contract.Type.ValueString()),
-		publiccloud.ContractTerm(contract.Term.ValueInt32()),
-		publiccloud.BillingFrequency(contract.BillingFrequency.ValueInt32()),
 		publiccloud.StorageType(plan.RootDiskStorageType.ValueString()),
 	)
+	opts.SetContractTerm(publiccloud.ContractTerm(contract.Term.ValueInt32()))
+	opts.SetBillingFrequency(publiccloud.BillingFrequency(contract.BillingFrequency.ValueInt32()))
+
 	opts.MarketAppId = utils.AdaptStringPointerValueToNullableString(plan.MarketAppID)
 	opts.Reference = utils.AdaptStringPointerValueToNullableString(plan.Reference)
 	opts.RootDiskSize = utils.AdaptInt32PointerValueToNullableInt32(plan.RootDiskSize)
@@ -265,10 +266,14 @@ func (i *instanceResource) Delete(
 		return
 	}
 
+	opts := publiccloud.NewTerminateInstanceOpts()
+	opts.SetReasonCode("CANCEL_OTHER")
+	opts.SetReason("Terraform")
+
 	httpResponse, err := i.PubliccloudAPI.TerminateInstance(
 		ctx,
 		state.ID.ValueString(),
-	).Execute()
+	).TerminateInstanceOpts(*opts).Execute()
 	if err != nil {
 		utils.SdkError(ctx, &resp.Diagnostics, err, httpResponse)
 	}
