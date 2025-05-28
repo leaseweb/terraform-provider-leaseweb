@@ -34,7 +34,6 @@ func (l *loadBalancerListenersDataSource) Schema(
 	response *datasource.SchemaResponse,
 ) {
 	response.Schema = schema.Schema{
-		Description: utils.BetaDescription,
 		Attributes: map[string]schema.Attribute{
 			"load_balancer_id": schema.StringAttribute{
 				Required:    true,
