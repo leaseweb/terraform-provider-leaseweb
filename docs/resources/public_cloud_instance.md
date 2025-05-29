@@ -27,6 +27,7 @@ resource "leaseweb_public_cloud_instance" "example" {
   region                 = "eu-west-3"
   root_disk_storage_type = "CENTRAL"
   type                   = "lsw.m3.large"
+  private_network        = true
 }
 ```
 
