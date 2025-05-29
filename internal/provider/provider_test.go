@@ -213,6 +213,11 @@ func TestAccPublicCloudInstancesDataSource(t *testing.T) {
 						"instances.0.iso.name",
 						"Acronis Boot Media",
 					),
+					resource.TestCheckResourceAttr(
+						"data.leaseweb_public_cloud_instances.test",
+						"instances.0.has_private_network",
+						"false",
+					),
 				),
 			},
 		},

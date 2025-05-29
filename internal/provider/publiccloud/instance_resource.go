@@ -2,8 +2,11 @@ package publiccloud
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"time"
 
+	"github.com/cenkalti/backoff/v5"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int32validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
@@ -71,6 +74,7 @@ type instanceResourceModel struct {
 	IPs                 types.List   `tfsdk:"ips"`
 	Contract            types.Object `tfsdk:"contract"`
 	MarketAppID         types.String `tfsdk:"market_app_id"`
+	HasPrivateNetwork   types.Bool   `tfsdk:"private_network"`
 }
 
 func adaptInstanceDetailsToInstanceResource(
@@ -87,6 +91,7 @@ func adaptInstanceDetailsToInstanceResource(
 		RootDiskSize:        basetypes.NewInt32Value(instanceDetails.GetRootDiskSize()),
 		RootDiskStorageType: basetypes.NewStringValue(string(instanceDetails.GetRootDiskStorageType())),
 		MarketAppID:         basetypes.NewStringPointerValue(instanceDetails.MarketAppId.Get()),
+		HasPrivateNetwork:   basetypes.NewBoolValue(instanceDetails.GetHasPrivateNetwork()),
 	}
 
 	image := utils.AdaptSdkModelToResourceObject(
@@ -233,26 +238,42 @@ func (i *instanceResource) Create(
 		return
 	}
 
-	// Get ISO data from instanceDetails
-	instanceDetails, httpResponse, err := i.PubliccloudAPI.GetInstance(
-		ctx,
-		instance.GetId(),
-	).Execute()
+	changed, err := i.waitUntilStateChanges(ctx, resp, instance.GetId(), string(publiccloud.STATE_RUNNING))
+
+	if changed != nil {
+
+		if !plan.HasPrivateNetwork.IsUnknown() {
+
+			if plan.HasPrivateNetwork.ValueBool() {
+
+				res, err := i.PubliccloudAPI.AddToPrivateNetwork(ctx, changed.Id).Execute()
+
+				if err != nil {
+					utils.SdkError(ctx, &resp.Diagnostics, err, res)
+					return
+				}
+
+				changed.HasPrivateNetwork = true
+
+			}
+		}
+
+		state := adaptInstanceDetailsToInstanceResource(
+			*changed,
+			ctx,
+			&resp.Diagnostics,
+		)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		resp.Diagnostics.Append(resp.State.Set(ctx, state)...)
+	}
 	if err != nil {
-		utils.SdkError(ctx, &resp.Diagnostics, err, httpResponse)
+		utils.SdkError(ctx, &resp.Diagnostics, err, nil)
 		return
 	}
 
-	state := adaptInstanceDetailsToInstanceResource(
-		*instanceDetails,
-		ctx,
-		&resp.Diagnostics,
-	)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, state)...)
 }
 
 func (i *instanceResource) Delete(
@@ -267,6 +288,7 @@ func (i *instanceResource) Delete(
 	}
 
 	opts := publiccloud.NewTerminateInstanceOpts()
+
 	opts.SetReasonCode("CANCEL_OTHER")
 	opts.SetReason("Terraform")
 
@@ -323,6 +345,84 @@ func (i *instanceResource) Read(
 	resp.Diagnostics.Append(resp.State.Set(ctx, newState)...)
 }
 
+func (i *instanceResource) TogglePrivateNetwork(
+	plan instanceResourceModel,
+	instanceDetails *publiccloud.InstanceDetails,
+	ctx context.Context,
+	resp *resource.UpdateResponse,
+) bool {
+
+	if !plan.HasPrivateNetwork.IsUnknown() {
+
+		if plan.HasPrivateNetwork.ValueBool() && !instanceDetails.HasPrivateNetwork {
+
+			res, err := i.PubliccloudAPI.AddToPrivateNetwork(ctx, instanceDetails.Id).Execute()
+
+			if err != nil {
+				utils.SdkError(ctx, &resp.Diagnostics, err, res)
+				return false
+			} else {
+				instanceDetails.HasPrivateNetwork = true
+			}
+
+		}
+
+		if !plan.HasPrivateNetwork.ValueBool() && instanceDetails.HasPrivateNetwork {
+
+			res, err := i.PubliccloudAPI.RemoveFromPrivateNetwork(ctx, instanceDetails.Id).Execute()
+
+			if err != nil {
+				utils.SdkError(ctx, &resp.Diagnostics, err, res)
+				return false
+			} else {
+				instanceDetails.HasPrivateNetwork = false
+			}
+
+		}
+
+	}
+
+	return true
+}
+
+func (i *instanceResource) waitUntilStateChanges(
+	ctx context.Context,
+	resp *resource.CreateResponse,
+	instanceId string,
+	expectedState string,
+) (*publiccloud.InstanceDetails, error) {
+	// Create a constant backoff with a 5-second retry interval
+	bo := backoff.NewConstantBackOff(5 * time.Second)
+
+	// Set the retry limit to 10 retries (60 seconds)
+	retryCount := 0
+	maxRetries := 10
+
+	// Start polling and retrying
+	for {
+		if retryCount >= maxRetries {
+			return nil, errors.New("timed out waiting for status to change after 1 minute")
+		}
+
+		instanceDetails, httpResponse, err := i.PubliccloudAPI.
+			GetInstance(ctx, instanceId).
+			Execute()
+		if err != nil {
+			utils.SdkError(ctx, &resp.Diagnostics, err, httpResponse)
+			return nil, err
+		}
+
+		if instanceDetails.GetState() == publiccloud.State(expectedState) {
+			return instanceDetails, nil
+		}
+
+		// Sleep for the backoff interval before retrying
+		time.Sleep(bo.NextBackOff())
+		retryCount++
+	}
+
+}
+
 func (i *instanceResource) Update(
 	ctx context.Context,
 	req resource.UpdateRequest,
@@ -367,6 +467,10 @@ func (i *instanceResource) Update(
 	if err != nil {
 		utils.SdkError(ctx, &resp.Diagnostics, err, httpResponse)
 		return
+	}
+
+	if !plan.HasPrivateNetwork.IsUnknown() {
+		i.TogglePrivateNetwork(plan, instanceDetails, ctx, resp)
 	}
 
 	state := adaptInstanceDetailsToInstanceResource(
@@ -564,6 +668,11 @@ func (i *instanceResource) Schema(
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
+			},
+			"private_network": schema.BoolAttribute{
+				Computed:    true,
+				Optional:    true,
+				Description: "",
 			},
 		},
 	}
