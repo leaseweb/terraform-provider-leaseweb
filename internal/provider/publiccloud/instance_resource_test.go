@@ -61,7 +61,8 @@ func Test_adaptInstanceDetailsToInstanceResource(t *testing.T) {
 				Ip: "127.0.0.1",
 			},
 		},
-		Iso: *publiccloud.NewNullableIso(&isoSdk),
+		Iso:               *publiccloud.NewNullableIso(&isoSdk),
+		HasPrivateNetwork: true,
 	}
 
 	diags := diag.Diagnostics{}
@@ -99,4 +100,6 @@ func Test_adaptInstanceDetailsToInstanceResource(t *testing.T) {
 	iso := isoResourceModel{}
 	got.ISO.As(context.TODO(), &iso, basetypes.ObjectAsOptions{})
 	assert.Equal(t, "isoId", iso.ID.ValueString())
+
+	assert.True(t, got.HasPrivateNetwork.ValueBool())
 }
