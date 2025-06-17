@@ -68,9 +68,9 @@ func (p *leasewebProvider) Schema(
 				Description: "Scheme for Leaseweb API, defaults to \"https\". May also be provided via LEASEWEB_SCHEME environment variable if present.",
 			},
 			"token": schema.StringAttribute{
+				Optional:    true,
 				Description: "The API token to use. By default it takes the value from the LEASEWEB_TOKEN environment variable if present.",
 				Sensitive:   true,
-				Required:    true,
 			},
 		},
 	}
