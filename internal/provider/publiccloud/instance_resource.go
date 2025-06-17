@@ -239,28 +239,33 @@ func (i *instanceResource) Create(
 		return
 	}
 
-	changed, err := i.waitUntilStateChanges(ctx, resp, instance.GetId(), string(publiccloud.STATE_RUNNING))
+	var instanceDetails *publiccloud.InstanceDetails
 
-	if changed != nil {
+	if !plan.HasPrivateNetwork.IsUnknown() && plan.HasPrivateNetwork.ValueBool() {
 
-		if !plan.HasPrivateNetwork.IsUnknown() {
+		// If the instance is created with a private network, we need to wait for it to be running
+		instanceDetails, res, err := i.waitUntilPropertyChanges(ctx, instance.GetId(), "state", string(publiccloud.STATE_RUNNING))
+		if err != nil {
+			utils.SdkError(ctx, &resp.Diagnostics, err, res)
+			return
+		}
 
-			if plan.HasPrivateNetwork.ValueBool() {
+		// After the instance is running, we can add it to the private network
+		res, err = i.PubliccloudAPI.AddToPrivateNetwork(ctx, instanceDetails.Id).Execute()
+		if err != nil {
+			utils.SdkError(ctx, &resp.Diagnostics, err, res)
+			return
+		}
 
-				res, err := i.PubliccloudAPI.AddToPrivateNetwork(ctx, changed.Id).Execute()
-
-				if err != nil {
-					utils.SdkError(ctx, &resp.Diagnostics, err, res)
-					return
-				}
-
-				changed.HasPrivateNetwork = true
-
-			}
+		// Wait until the private network is added
+		instanceDetails, res, err = i.waitUntilPropertyChanges(ctx, instanceDetails.Id, "has_private_network", true)
+		if err != nil {
+			utils.SdkError(ctx, &resp.Diagnostics, err, res)
+			return
 		}
 
 		state := adaptInstanceDetailsToInstanceResource(
-			*changed,
+			*instanceDetails,
 			ctx,
 			&resp.Diagnostics,
 		)
@@ -269,10 +274,27 @@ func (i *instanceResource) Create(
 		}
 
 		resp.Diagnostics.Append(resp.State.Set(ctx, state)...)
-	}
-	if err != nil {
-		utils.SdkError(ctx, &resp.Diagnostics, err, nil)
-		return
+
+	} else {
+		var res *http.Response
+		instanceDetails, res, err = i.PubliccloudAPI.
+			GetInstance(ctx, instance.Id).
+			Execute()
+		if err != nil {
+			utils.SdkError(ctx, &resp.Diagnostics, err, res)
+			return
+		}
+
+		state := adaptInstanceDetailsToInstanceResource(
+			*instanceDetails,
+			ctx,
+			&resp.Diagnostics,
+		)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		resp.Diagnostics.Append(resp.State.Set(ctx, state)...)
 	}
 
 }
@@ -350,27 +372,20 @@ func (i *instanceResource) TogglePrivateNetwork(
 	plan instanceResourceModel,
 	instanceDetails *publiccloud.InstanceDetails,
 	ctx context.Context,
-	resp *resource.UpdateResponse,
-) {
-
-	var res *http.Response
-	var updated *publiccloud.InstanceDetails
-	var err error
+) (*http.Response, error) {
 
 	if plan.HasPrivateNetwork.ValueBool() && !instanceDetails.HasPrivateNetwork {
 
-		res, err = i.PubliccloudAPI.AddToPrivateNetwork(ctx, instanceDetails.Id).Execute()
+		res, err := i.PubliccloudAPI.AddToPrivateNetwork(ctx, instanceDetails.Id).Execute()
 
 		if err != nil {
-			utils.SdkError(ctx, &resp.Diagnostics, err, res)
-			return
+			return res, err
 		}
 
-		updated, err = i.waitUntilPrivateNetworkChanges(ctx, resp, instanceDetails.Id, true)
+		updated, res, err := i.waitUntilPropertyChanges(ctx, instanceDetails.Id, "has_private_network", true)
 
 		if err != nil {
-			utils.SdkError(ctx, &resp.Diagnostics, err, res)
-			return
+			return res, err
 		}
 
 		*instanceDetails = *updated
@@ -379,93 +394,66 @@ func (i *instanceResource) TogglePrivateNetwork(
 
 	if !plan.HasPrivateNetwork.ValueBool() && instanceDetails.HasPrivateNetwork {
 
-		res, err = i.PubliccloudAPI.RemoveFromPrivateNetwork(ctx, instanceDetails.Id).Execute()
+		res, err := i.PubliccloudAPI.RemoveFromPrivateNetwork(ctx, instanceDetails.Id).Execute()
 
 		if err != nil {
-			utils.SdkError(ctx, &resp.Diagnostics, err, res)
-			return
+			return res, err
 		}
 
-		updated, err = i.waitUntilPrivateNetworkChanges(ctx, resp, instanceDetails.Id, false)
+		updated, res, err := i.waitUntilPropertyChanges(ctx, instanceDetails.Id, "has_private_network", false)
 
 		if err != nil {
-			utils.SdkError(ctx, &resp.Diagnostics, err, res)
-			return
+			return res, err
 		}
 
 		*instanceDetails = *updated
 
 	}
 
+	return nil, nil
+
 }
 
-func (i *instanceResource) waitUntilStateChanges(
+func (i *instanceResource) waitUntilPropertyChanges(
 	ctx context.Context,
-	resp *resource.CreateResponse,
 	instanceId string,
-	expectedState string,
-) (*publiccloud.InstanceDetails, error) {
-	// Create a constant backoff with a 5-second retry interval
-	bo := backoff.NewConstantBackOff(5 * time.Second)
+	propertyName string,
+	expectedValue any,
+) (*publiccloud.InstanceDetails, *http.Response, error) {
 
-	// Set the retry limit to 10 retries (60 seconds)
+	// Create a constant backoff with a 5-second retry interval
+	bo := backoff.NewConstantBackOff(10 * time.Second)
+
+	// Set the retry limit to 30 retries (5 minutes)
 	retryCount := 0
-	maxRetries := 10
+	maxRetries := 30
 
 	// Start polling and retrying
 	for {
 		if retryCount >= maxRetries {
-			return nil, errors.New("timed out waiting for status to change after 1 minute")
+			return nil, nil, errors.New("timed out waiting for property to change after 5 minutes")
 		}
 
 		instanceDetails, httpResponse, err := i.PubliccloudAPI.
 			GetInstance(ctx, instanceId).
 			Execute()
 		if err != nil {
-			utils.SdkError(ctx, &resp.Diagnostics, err, httpResponse)
-			return nil, err
+			return nil, httpResponse, err
 		}
 
-		if instanceDetails.GetState() == publiccloud.State(expectedState) {
-			return instanceDetails, nil
+		var currentValue any
+
+		switch propertyName {
+		case "has_private_network":
+			currentValue = instanceDetails.GetHasPrivateNetwork()
+		case "state":
+			currentValue = string(instanceDetails.GetState())
+		default:
+			return nil, nil, fmt.Errorf("unsupported property name: %s", propertyName)
 		}
 
-		// Sleep for the backoff interval before retrying
-		time.Sleep(bo.NextBackOff())
-		retryCount++
-	}
-
-}
-
-func (i *instanceResource) waitUntilPrivateNetworkChanges(
-	ctx context.Context,
-	resp *resource.UpdateResponse,
-	instanceId string,
-	expected bool,
-) (*publiccloud.InstanceDetails, error) {
-	// Create a constant backoff with a 5-second retry interval
-	bo := backoff.NewConstantBackOff(5 * time.Second)
-
-	// Set the retry limit to 5 retries (30 seconds)
-	retryCount := 0
-	maxRetries := 5
-
-	// Start polling and retrying
-	for {
-		if retryCount >= maxRetries {
-			return nil, errors.New("timed out waiting for status to change after 30 seconds")
-		}
-
-		instanceDetails, httpResponse, err := i.PubliccloudAPI.
-			GetInstance(ctx, instanceId).
-			Execute()
-		if err != nil {
-			utils.SdkError(ctx, &resp.Diagnostics, err, httpResponse)
-			return nil, err
-		}
-
-		if instanceDetails.GetHasPrivateNetwork() == expected {
-			return instanceDetails, nil
+		if currentValue == expectedValue {
+			return instanceDetails, httpResponse, nil
 		}
 
 		// Sleep for the backoff interval before retrying
@@ -522,7 +510,12 @@ func (i *instanceResource) Update(
 	}
 
 	if !plan.HasPrivateNetwork.IsUnknown() {
-		i.TogglePrivateNetwork(plan, instanceDetails, ctx, resp)
+		res, err := i.TogglePrivateNetwork(plan, instanceDetails, ctx)
+		if err != nil {
+			utils.SdkError(ctx, &resp.Diagnostics, err, res)
+			return
+		}
+
 	}
 
 	state := adaptInstanceDetailsToInstanceResource(
