@@ -717,7 +717,7 @@ func (i *instanceResource) Schema(
 			"private_network": schema.BoolAttribute{
 				Computed:    true,
 				Optional:    true,
-				Description: "",
+				Description: "Indicates whether the instance is connected to a private network",
 			},
 		},
 	}

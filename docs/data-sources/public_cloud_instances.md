@@ -30,7 +30,7 @@ data "leaseweb_public_cloud_instances" "all" {}
 Read-Only:
 
 - `contract` (Attributes) (see [below for nested schema](#nestedatt--instances--contract))
-- `has_private_network` (Boolean) The instance should be added to a private network
+- `has_private_network` (Boolean) Indicates whether the instance is connected to a private network
 - `id` (String) The instance unique identifier
 - `image` (Attributes) (see [below for nested schema](#nestedatt--instances--image))
 - `ips` (Attributes List) (see [below for nested schema](#nestedatt--instances--ips))

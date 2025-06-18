@@ -306,7 +306,7 @@ func (d *instancesDataSource) Schema(
 						},
 						"has_private_network": schema.BoolAttribute{
 							Computed:    true,
-							Description: "The instance should be added to a private network",
+							Description: "Indicates whether the instance is connected to a private network",
 						},
 					},
 				},
