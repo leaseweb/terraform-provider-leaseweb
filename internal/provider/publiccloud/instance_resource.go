@@ -240,11 +240,12 @@ func (i *instanceResource) Create(
 	}
 
 	var instanceDetails *publiccloud.InstanceDetails
+	var res *http.Response
 
 	if !plan.HasPrivateNetwork.IsUnknown() && plan.HasPrivateNetwork.ValueBool() {
 
 		// If the instance is created with a private network, we need to wait for it to be running
-		instanceDetails, res, err := i.waitUntilPropertyChanges(ctx, instance.GetId(), "state", string(publiccloud.STATE_RUNNING))
+		instanceDetails, res, err = i.waitUntilPropertyChanges(ctx, instance.GetId(), "state", string(publiccloud.STATE_RUNNING))
 		if err != nil {
 			utils.SdkError(ctx, &resp.Diagnostics, err, res)
 			return
@@ -264,17 +265,6 @@ func (i *instanceResource) Create(
 			return
 		}
 
-		state := adaptInstanceDetailsToInstanceResource(
-			*instanceDetails,
-			ctx,
-			&resp.Diagnostics,
-		)
-		if resp.Diagnostics.HasError() {
-			return
-		}
-
-		resp.Diagnostics.Append(resp.State.Set(ctx, state)...)
-
 	} else {
 		var res *http.Response
 		instanceDetails, res, err = i.PubliccloudAPI.
@@ -285,17 +275,18 @@ func (i *instanceResource) Create(
 			return
 		}
 
-		state := adaptInstanceDetailsToInstanceResource(
-			*instanceDetails,
-			ctx,
-			&resp.Diagnostics,
-		)
-		if resp.Diagnostics.HasError() {
-			return
-		}
-
-		resp.Diagnostics.Append(resp.State.Set(ctx, state)...)
 	}
+
+	state := adaptInstanceDetailsToInstanceResource(
+		*instanceDetails,
+		ctx,
+		&resp.Diagnostics,
+	)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, state)...)
 
 }
 
