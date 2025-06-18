@@ -75,7 +75,7 @@ type instanceResourceModel struct {
 	IPs                 types.List   `tfsdk:"ips"`
 	Contract            types.Object `tfsdk:"contract"`
 	MarketAppID         types.String `tfsdk:"market_app_id"`
-	HasPrivateNetwork   types.Bool   `tfsdk:"private_network"`
+	HasPrivateNetwork   types.Bool   `tfsdk:"has_private_network"`
 }
 
 func adaptInstanceDetailsToInstanceResource(
@@ -705,7 +705,7 @@ func (i *instanceResource) Schema(
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 			},
-			"private_network": schema.BoolAttribute{
+			"has_private_network": schema.BoolAttribute{
 				Computed:    true,
 				Optional:    true,
 				Description: "Indicates whether the instance is connected to a private network",
