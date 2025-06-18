@@ -57,6 +57,7 @@ type instanceDataSourceModel struct {
 	RootDiskStorageType types.String            `tfsdk:"root_disk_storage_type"`
 	State               types.String            `tfsdk:"state"`
 	Type                types.String            `tfsdk:"type"`
+	HasPrivateNetwork   types.Bool              `tfsdk:"has_private_network"`
 }
 
 type ipDataSourceModel struct {
@@ -173,6 +174,7 @@ func (d *instancesDataSource) Read(
 			Reference:           basetypes.NewStringPointerValue(instanceDetails.Reference.Get()),
 			State:               basetypes.NewStringValue(string(instanceDetails.GetState())),
 			Type:                basetypes.NewStringValue(string(instanceDetails.GetType())),
+			HasPrivateNetwork:   basetypes.NewBoolValue(instanceDetails.GetHasPrivateNetwork()),
 		}
 		imageDetails := images.findById(instanceDetails.Image.Id)
 		if imageDetails == nil {
@@ -301,6 +303,10 @@ func (d *instancesDataSource) Schema(
 						},
 						"type": schema.StringAttribute{
 							Computed: true,
+						},
+						"has_private_network": schema.BoolAttribute{
+							Computed:    true,
+							Description: "Indicates whether the instance is connected to a private network",
 						},
 					},
 				},

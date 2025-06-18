@@ -27,6 +27,7 @@ resource "leaseweb_public_cloud_instance" "example" {
   region                 = "eu-west-3"
   root_disk_storage_type = "CENTRAL"
   type                   = "lsw.m3.large"
+  private_network        = true
 }
 ```
 
@@ -125,6 +126,7 @@ resource "leaseweb_public_cloud_instance" "example" {
 
 ### Optional
 
+- `has_private_network` (Boolean) Indicates whether the instance is connected to a private network
 - `market_app_id` (String) Market App ID that must be installed into the instance. **WARNING!** Changing this value once running will cause this instance to be destroyed and a new one to be created.
 - `reference` (String) The identifying name set to the instance
 - `root_disk_size` (Number) The root disk's size in GB. Must be at least 5 GB for Linux and FreeBSD instances and 50 GB for Windows instances. The maximum size is 1000 GB
