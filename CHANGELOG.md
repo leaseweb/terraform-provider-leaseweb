@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.27.0](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.26.2...v1.27.0) (2025-06-18)
+
+
+### Features
+
+* add instance to private network ([#375](https://github.com/leaseweb/terraform-provider-leaseweb/issues/375)) ([5fab2c2](https://github.com/leaseweb/terraform-provider-leaseweb/commit/5fab2c24bdd512028d106212e4de18ef433dca71))
+
 ## [1.26.2](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.26.1...v1.26.2) (2025-05-28)
 
 
