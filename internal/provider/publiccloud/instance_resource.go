@@ -245,7 +245,7 @@ func (i *instanceResource) Create(
 	if !plan.HasPrivateNetwork.IsUnknown() && plan.HasPrivateNetwork.ValueBool() {
 
 		// If the instance is created with a private network, we need to wait for it to be running
-		instanceDetails, res, err = i.waitUntilPropertyChanges(ctx, instance.GetId(), "state", string(publiccloud.STATE_RUNNING))
+		instanceDetails, res, err = i.waitUntilPropertyValueEquals(ctx, instance.GetId(), "state", string(publiccloud.STATE_RUNNING))
 		if err != nil {
 			utils.SdkError(ctx, &resp.Diagnostics, err, res)
 			return
@@ -259,14 +259,14 @@ func (i *instanceResource) Create(
 		}
 
 		// Wait until the private network is added
-		instanceDetails, res, err = i.waitUntilPropertyChanges(ctx, instanceDetails.Id, "has_private_network", true)
+		instanceDetails, res, err = i.waitUntilPropertyValueEquals(ctx, instanceDetails.Id, "has_private_network", true)
 		if err != nil {
 			utils.SdkError(ctx, &resp.Diagnostics, err, res)
 			return
 		}
 
 	} else {
-		var res *http.Response
+
 		instanceDetails, res, err = i.PubliccloudAPI.
 			GetInstance(ctx, instance.Id).
 			Execute()
@@ -373,7 +373,7 @@ func (i *instanceResource) TogglePrivateNetwork(
 			return res, err
 		}
 
-		updated, res, err := i.waitUntilPropertyChanges(ctx, instanceDetails.Id, "has_private_network", true)
+		updated, res, err := i.waitUntilPropertyValueEquals(ctx, instanceDetails.Id, "has_private_network", true)
 
 		if err != nil {
 			return res, err
@@ -391,7 +391,7 @@ func (i *instanceResource) TogglePrivateNetwork(
 			return res, err
 		}
 
-		updated, res, err := i.waitUntilPropertyChanges(ctx, instanceDetails.Id, "has_private_network", false)
+		updated, res, err := i.waitUntilPropertyValueEquals(ctx, instanceDetails.Id, "has_private_network", false)
 
 		if err != nil {
 			return res, err
@@ -405,7 +405,7 @@ func (i *instanceResource) TogglePrivateNetwork(
 
 }
 
-func (i *instanceResource) waitUntilPropertyChanges(
+func (i *instanceResource) waitUntilPropertyValueEquals(
 	ctx context.Context,
 	instanceId string,
 	propertyName string,
