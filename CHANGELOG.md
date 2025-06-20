@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.27.1](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.27.0...v1.27.1) (2025-06-20)
+
+
+### Bug Fixes
+
+* make token optional in provider schema to allow reading from env var ([#378](https://github.com/leaseweb/terraform-provider-leaseweb/issues/378)) ([0af1ba5](https://github.com/leaseweb/terraform-provider-leaseweb/commit/0af1ba58fcb074e668f6a23427720504af4e14f6))
+
 ## [1.27.0](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.26.2...v1.27.0) (2025-06-18)
 
 
