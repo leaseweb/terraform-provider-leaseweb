@@ -452,6 +452,11 @@ func (i *installationResource) waitForJobAndRetrieveUntilFinished(serverID, jobI
 			return job, nil
 		}
 
+		if job.GetStatus() == "FAILED" {
+			// Job has failed, return an error
+			return nil, fmt.Errorf("job %s for server %s has failed or was canceled", jobID, serverID)
+		}
+
 		// Sleep for the backoff interval before retrying
 		time.Sleep(bo.NextBackOff())
 		retryCount++
