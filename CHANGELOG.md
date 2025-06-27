@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.27.2](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.27.1...v1.27.2) (2025-06-27)
+
+
+### Bug Fixes
+
+* look for job failure during installation ([#384](https://github.com/leaseweb/terraform-provider-leaseweb/issues/384)) ([f044b16](https://github.com/leaseweb/terraform-provider-leaseweb/commit/f044b1631a1b6c22094906bab2b485527429017f))
+
 ## [1.27.1](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.27.0...v1.27.1) (2025-06-20)
 
 
