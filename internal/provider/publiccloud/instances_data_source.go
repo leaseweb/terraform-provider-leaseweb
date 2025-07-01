@@ -214,7 +214,6 @@ func (d *instancesDataSource) Schema(
 	contractTerms := utils.NewIntMarkdownList(publiccloud.AllowedContractTermEnumValues)
 
 	resp.Schema = schema.Schema{
-		Description: utils.BetaDescription,
 		Attributes: map[string]schema.Attribute{
 			"instances": schema.ListNestedAttribute{
 				Computed: true,

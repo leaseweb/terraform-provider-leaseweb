@@ -3,12 +3,12 @@
 page_title: "leaseweb_public_cloud_load_balancer Resource - leaseweb"
 subcategory: ""
 description: |-
-  Warning: This functionality is in BETA. Documentation might be incorrect or incomplete. Functionality might change with the final release.
+  
 ---
 
 # leaseweb_public_cloud_load_balancer (Resource)
 
-**Warning:** This functionality is in BETA. Documentation might be incorrect or incomplete. Functionality might change with the final release.
+
 
 ## Example Usage
 
