@@ -52,7 +52,7 @@ func (c contractResourceModel) attributeTypes() map[string]attr.Type {
 	}
 }
 
-func adaptContractToContractResource(contract publiccloud.InstanceContract) contractResourceModel {
+func adaptContractToContractResource(contract publiccloud.InstanceContractDetails) contractResourceModel {
 	return contractResourceModel{
 		BillingFrequency: basetypes.NewInt32Value(int32(contract.GetBillingFrequency())),
 		Term:             basetypes.NewInt32Value(int32(contract.GetTerm())),

@@ -14,7 +14,7 @@ import (
 
 func Test_adaptContractToContractResource(t *testing.T) {
 	endsAt, _ := time.Parse("2006-01-02 15:04:05", "2023-12-14 17:09:47")
-	sdkContract := publiccloud.InstanceContract{
+	sdkContract := publiccloud.InstanceContractDetails{
 		BillingFrequency: publiccloud.BILLINGFREQUENCY__1,
 		Term:             publiccloud.CONTRACTTERM__3,
 		Type:             publiccloud.CONTRACTTYPE_HOURLY,
@@ -50,7 +50,7 @@ func Test_adaptInstanceDetailsToInstanceResource(t *testing.T) {
 		State:               publiccloud.STATE_CREATING,
 		RootDiskSize:        50,
 		RootDiskStorageType: publiccloud.STORAGETYPE_CENTRAL,
-		Contract: publiccloud.InstanceContract{
+		Contract: publiccloud.InstanceContractDetails{
 			Type: publiccloud.CONTRACTTYPE_MONTHLY,
 		},
 		Image: publiccloud.Image{

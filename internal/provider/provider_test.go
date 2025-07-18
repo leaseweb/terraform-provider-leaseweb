@@ -989,12 +989,12 @@ func TestPublicCloudAccLoadBalancersDataSource(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						"data.leaseweb_public_cloud_load_balancers.test",
 						"load_balancers.0.id",
-						"5fd135a9-3ff6-4794-8b92-8cd8747a3ea3",
+						"32082a93-d1e2-4bc0-8f5e-8fe4312b0844",
 					),
 					resource.TestCheckResourceAttr(
 						"data.leaseweb_public_cloud_load_balancers.test",
 						"load_balancers.0.reference",
-						"my-load-balancer",
+						"my-loadbalancer1",
 					),
 					resource.TestCheckResourceAttr(
 						"data.leaseweb_public_cloud_load_balancers.test",
@@ -1009,7 +1009,7 @@ func TestPublicCloudAccLoadBalancersDataSource(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						"data.leaseweb_public_cloud_load_balancers.test",
 						"load_balancers.0.type",
-						"lsw.c3.4xlarge",
+						"lsw.m3.large",
 					),
 
 					resource.TestCheckResourceAttr(
