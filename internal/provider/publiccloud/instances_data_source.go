@@ -34,7 +34,7 @@ type contractDataSourceModel struct {
 	Type             types.String `tfsdk:"type"`
 }
 
-func adaptContractToContractDataSource(contract publiccloud.InstanceContract) contractDataSourceModel {
+func adaptContractToContractDataSource(contract publiccloud.InstanceContractDetails) contractDataSourceModel {
 	return contractDataSourceModel{
 		BillingFrequency: basetypes.NewInt32Value(int32(contract.GetBillingFrequency())),
 		EndsAt:           utils.AdaptNullableTimeToStringValue(contract.EndsAt.Get()),

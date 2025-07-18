@@ -2,6 +2,8 @@ package publiccloud
 
 import (
 	"context"
+	"net/http"
+	"sort"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -14,6 +16,11 @@ import (
 var (
 	_ datasource.DataSourceWithConfigure = &loadBalancersDataSource{}
 )
+
+type loadBalancerDetailsErr struct {
+	err          error
+	httpResponse *http.Response
+}
 
 type loadBalancerDataSourceModel struct {
 	ID        types.String            `tfsdk:"id"`
@@ -129,8 +136,43 @@ func (l *loadBalancersDataSource) Read(
 		loadBalancerRequest = loadBalancerRequest.Offset(*offset)
 	}
 
+	// Get loadBalancerDetails for each loadbalancer
+	var loadBalancerDetailsList []publiccloud.LoadBalancerDetails
+	resultChan := make(chan publiccloud.LoadBalancerDetails)
+	errorChan := make(chan loadBalancerDetailsErr)
+	for _, loadBalancer := range loadBalancers {
+		go func(id string) {
+			loadBalancerDetails, httpResponse, err := l.PubliccloudAPI.GetLoadBalancer(
+				ctx,
+				id,
+			).Execute()
+			if err != nil {
+				errorChan <- loadBalancerDetailsErr{
+					err:          err,
+					httpResponse: httpResponse,
+				}
+				return
+			}
+			resultChan <- *loadBalancerDetails
+		}(loadBalancer.Id)
+	}
+	for i := 0; i < len(loadBalancers); i++ {
+		select {
+		case err := <-errorChan:
+			utils.SdkError(ctx, &response.Diagnostics, err.err, err.httpResponse)
+			return
+		case res := <-resultChan:
+			loadBalancerDetailsList = append(loadBalancerDetailsList, res)
+		}
+	}
+
 	var state loadBalancersDataSourceModel
-	for _, sdkLoadBalancer := range loadBalancers {
+
+	sort.Slice(loadBalancerDetailsList, func(i, j int) bool {
+		return loadBalancerDetailsList[i].Id < loadBalancerDetailsList[j].Id
+	})
+
+	for _, sdkLoadBalancer := range loadBalancerDetailsList {
 		var ips []ipDataSourceModel
 		for _, ip := range sdkLoadBalancer.Ips {
 			ips = append(ips, ipDataSourceModel{IP: basetypes.NewStringValue(ip.GetIp())})
