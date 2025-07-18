@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.28.0](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.27.2...v1.28.0) (2025-07-18)
+
+
+### Features
+
+* **publiccloud:** bump to v0.0.11 with related fixes ([#398](https://github.com/leaseweb/terraform-provider-leaseweb/issues/398)) ([596017b](https://github.com/leaseweb/terraform-provider-leaseweb/commit/596017b938ce27d38308b9e5e5f8de18640eae0b))
+
 ## [1.27.2](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.27.1...v1.27.2) (2025-06-27)
 
 
