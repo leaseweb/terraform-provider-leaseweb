@@ -167,6 +167,8 @@ Read-Only:
 
 Import is supported using the following syntax:
 
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
 ```shell
 # Public Cloud load balancer can be imported by specifying the identifier.
 terraform import leaseweb_public_cloud_load_balancer.example ace712e9-a166-47f1-9065-4af0f7e7fce1
