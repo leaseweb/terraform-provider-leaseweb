@@ -57,6 +57,8 @@ Read-Only:
 
 Import is supported using the following syntax:
 
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
 ```shell
 # A null route history can be imported by specifying the ID.
 terraform import leaseweb_ipmgmt_null_route.example 123456
