@@ -24,7 +24,7 @@ terraform {
 }
 
 provider "leaseweb" {
-  token = "527070ca-8449-4f06-b609-ec6797bd8222"
+  token = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 }
 ```
 
@@ -57,12 +57,12 @@ terraform {
 
 provider "leaseweb" {
   alias = "nl"
-  token = "527070ca-8449-4f06-b609-ec6797bd8222"
+  token = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 }
 
 provider "leaseweb" {
   alias = "us"
-  token = "416fa444-5e96-4198-a4f7-297cbbc3cc70"
+  token = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 }
 
 resource "leaseweb_dedicated_server" "web-nl" {
