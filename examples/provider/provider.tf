@@ -8,5 +8,5 @@ terraform {
 }
 
 provider "leaseweb" {
-  token = "527070ca-8449-4f06-b609-ec6797bd8222"
+  token = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 }
