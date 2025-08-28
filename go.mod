@@ -13,7 +13,7 @@ require (
 	github.com/leaseweb/leaseweb-go-sdk/dns v1.3.0
 	github.com/leaseweb/leaseweb-go-sdk/ipmgmt v1.0.0
 	github.com/leaseweb/leaseweb-go-sdk/publiccloud v0.0.11
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 )
 
 require (
