@@ -56,3 +56,14 @@ resource "leaseweb_dns_resource_record_set" "example" {
   - *SOA*
   - *DS*
   - *TLSA*
+
+## Import
+
+Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
+```shell
+# A DNS record can be imported by specifying the domain name, record name and record type in comma-separated format.
+terraform import leaseweb_dns_resource_record_set.example "example.com,www.example.com.,A"
+```
