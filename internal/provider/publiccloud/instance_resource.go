@@ -301,10 +301,19 @@ func (i *instanceResource) Delete(
 		return
 	}
 
+	contract := contractResourceModel{}
+	state.Contract.As(
+		ctx,
+		&contract,
+		basetypes.ObjectAsOptions{},
+	)
+
 	opts := publiccloud.NewTerminateInstanceOpts()
 
-	opts.SetReasonCode("CANCEL_OTHER")
-	opts.SetReason("Terraform")
+	if publiccloud.ContractType(contract.Type.ValueString()) == publiccloud.CONTRACTTYPE_MONTHLY {
+		opts.SetReasonCode("CANCEL_OTHER")
+		opts.SetReason("Terraform")
+	}
 
 	httpResponse, err := i.PubliccloudAPI.TerminateInstance(
 		ctx,
