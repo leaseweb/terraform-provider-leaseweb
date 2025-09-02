@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.28.1](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.28.0...v1.28.1) (2025-09-02)
+
+
+### Bug Fixes
+
+* ensure the reason is kept only if the instance being removed is monthly ([#421](https://github.com/leaseweb/terraform-provider-leaseweb/issues/421)) ([7fa545d](https://github.com/leaseweb/terraform-provider-leaseweb/commit/7fa545d72c21f7e69cb55429944e5c75361cef8c))
+
 ## [1.28.0](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.27.2...v1.28.0) (2025-07-18)
 
 
