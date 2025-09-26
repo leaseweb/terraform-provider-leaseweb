@@ -132,7 +132,6 @@ func (t *targetGroupResource) Schema(
 	warningError := "**WARNING!** Changing this value once running will cause this target group to be destroyed and a new one to be created."
 
 	response.Schema = schema.Schema{
-		Description: utils.BetaDescription,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed: true,
