@@ -21,7 +21,7 @@
     "@commitlint/config-conventional": "20.0.0",
     "@stoplight/prism-cli": "5.14.2",
     "husky": "9.1.7",
-    "lint-staged": "16.2.5",
+    "lint-staged": "16.2.6",
     "markdownlint-cli": "0.45.0",
     "prettier": "3.6.2",
     "prettier-plugin-sort-json": "4.1.1"
