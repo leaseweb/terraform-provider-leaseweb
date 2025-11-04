@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.29.0](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.28.1...v1.29.0) (2025-11-04)
+
+
+### Features
+
+* make root disk size a mandatory parameter in launch instance ([#459](https://github.com/leaseweb/terraform-provider-leaseweb/issues/459)) ([11b766c](https://github.com/leaseweb/terraform-provider-leaseweb/commit/11b766cc5a9a63b9b2c5425fe81e52f33f90dbc9))
+
 ## [1.28.1](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.28.0...v1.28.1) (2025-09-02)
 
 
