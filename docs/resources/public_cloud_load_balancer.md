@@ -116,6 +116,16 @@ resource "leaseweb_public_cloud_load_balancer" "example" {
   - *lsw.r6a.12xlarge*
   - *lsw.r6a.16xlarge*
   - *lsw.r6a.24xlarge*
+  - *lsw.g6.xlarge*
+  - *lsw.g6.2xlarge*
+  - *lsw.g6.4xlarge*
+  - *lsw.g6.8xlarge*
+  - *lsw.g6.12xlarge*
+  - *lsw.g6.16xlarge*
+  - *lsw.g6.18xlarge*
+  - *lsw.g6.24xlarge*
+  - *lsw.gr6.4xlarge*
+  - *lsw.gr6.8xlarge*
 
 ### Optional
 
@@ -137,7 +147,6 @@ Required:
   - *3*
   - *6*
   - *12*
-  - *24*
 - `term` (Number) Contract term (in months). Used only when type is *MONTHLY*. Valid options are 
   - *0*
   - *1*

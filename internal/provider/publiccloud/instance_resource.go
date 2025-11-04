@@ -222,6 +222,7 @@ func (i *instanceResource) Create(
 		publiccloud.TypeName(plan.Type.ValueString()),
 		image.ID.ValueString(),
 		publiccloud.ContractType(contract.Type.ValueString()),
+		plan.RootDiskSize.ValueInt32(),
 		publiccloud.StorageType(plan.RootDiskStorageType.ValueString()),
 	)
 	opts.SetContractTerm(publiccloud.ContractTerm(contract.Term.ValueInt32()))
@@ -229,7 +230,6 @@ func (i *instanceResource) Create(
 
 	opts.MarketAppId = utils.AdaptStringPointerValueToNullableString(plan.MarketAppID)
 	opts.Reference = utils.AdaptStringPointerValueToNullableString(plan.Reference)
-	opts.RootDiskSize = utils.AdaptInt32PointerValueToNullableInt32(plan.RootDiskSize)
 
 	instance, httpResponse, err := i.PubliccloudAPI.LaunchInstance(ctx).
 		LaunchInstanceOpts(*opts).
@@ -645,8 +645,7 @@ func (i *instanceResource) Schema(
 				},
 			},
 			"root_disk_size": schema.Int32Attribute{
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
 				Description: "The root disk's size in GB. Must be at least 5 GB for Linux and FreeBSD instances and 50 GB for Windows instances. The maximum size is 1000 GB",
 				Validators: []validator.Int32{
 					int32validator.Between(5, 1000),

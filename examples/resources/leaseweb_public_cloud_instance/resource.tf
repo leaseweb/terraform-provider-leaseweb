@@ -11,6 +11,7 @@ resource "leaseweb_public_cloud_instance" "example" {
   reference              = "my webserver"
   region                 = "eu-west-3"
   root_disk_storage_type = "CENTRAL"
+  root_disk_size         = 5
   type                   = "lsw.m3.large"
   private_network        = true
 }

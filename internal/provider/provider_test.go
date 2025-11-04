@@ -244,6 +244,7 @@ func TestAccPublicCloudInstanceResource(t *testing.T) {
 					    id = "UBUNTU_20_04_64BIT"
 					  }
 					  root_disk_storage_type = "CENTRAL"
+					  root_disk_size         = 5
 					}
 					`,
 					Check: resource.ComposeAggregateTestCheckFunc(
@@ -330,6 +331,7 @@ func TestAccPublicCloudInstanceResource(t *testing.T) {
 				    id = "UBUNTU_20_04_64BIT"
 				  }
 				  root_disk_storage_type = "CENTRAL"
+				  root_disk_size         = 5
 				}
 				`,
 				},
@@ -357,6 +359,7 @@ func TestAccPublicCloudInstanceResource(t *testing.T) {
 					    id = "UBUNTU_20_04_64BIT"
 					  }
 					  root_disk_storage_type = "CENTRAL"
+					  root_disk_size         = 50
 					}
 					`,
 					ExpectError: regexp.MustCompile(
@@ -385,6 +388,7 @@ func TestAccPublicCloudInstanceResource(t *testing.T) {
 					    id = "UBUNTU_20_04_64BIT"
 					  }
 					  root_disk_storage_type = "CENTRAL"
+					  root_disk_size         = 5
 					}
 					`,
 				},
@@ -414,6 +418,7 @@ func TestAccPublicCloudInstanceResource(t *testing.T) {
 					    id = "UBUNTU_24_04_64BIT"
 					  }
 					  root_disk_storage_type = "CENTRAL"
+					  root_disk_size         = 5
 					}
 					`,
 				},
@@ -439,10 +444,39 @@ func TestAccPublicCloudInstanceResource(t *testing.T) {
 					    id = "UBUNTU_20_04_64BIT"
 					  }
 					  root_disk_storage_type = "CENTRAL"
+					  root_disk_size         = 5
 					}
 					`,
 					ExpectError: regexp.MustCompile(
 						`Attribute type value must be one of:`,
+					),
+				},
+			},
+		})
+	})
+
+	t.Run("missing root_disk_size throws an error", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: providerConfig + `
+					resource "leaseweb_public_cloud_instance" "test" {
+					  region = "eu-west-3"
+					  type = "lsw.m3.large"
+					  contract = {
+					    billing_frequency = 1
+					    term = 0
+					    type = "HOURLY"
+					  }
+					  image = {
+					    id = "UBUNTU_20_04_64BIT"
+					  }
+					  root_disk_storage_type = "CENTRAL"
+					}
+					`,
+					ExpectError: regexp.MustCompile(
+						"The argument \"root_disk_size\" is required, but no definition was found.",
 					),
 				},
 			},
@@ -496,6 +530,7 @@ func TestAccPublicCloudInstanceResource(t *testing.T) {
 					    id = "UBUNTU_20_04_64BIT"
 					  }
 					  root_disk_storage_type = "tralala"
+					  root_disk_size         = 5
 					}
 					`,
 					ExpectError: regexp.MustCompile(
@@ -524,6 +559,7 @@ func TestAccPublicCloudInstanceResource(t *testing.T) {
 					    id = "UBUNTU_20_04_64BIT"
 					  }
 					  root_disk_storage_type = "CENTRAL"
+					  root_disk_size         = 5
 					}
 					`,
 					ExpectError: regexp.MustCompile(
@@ -552,6 +588,7 @@ func TestAccPublicCloudInstanceResource(t *testing.T) {
 					    id = "UBUNTU_20_04_64BIT"
 					  }
 					  root_disk_storage_type = "CENTRAL"
+					  root_disk_size         = 5
 					}
 					`,
 					ExpectError: regexp.MustCompile(
@@ -580,6 +617,7 @@ func TestAccPublicCloudInstanceResource(t *testing.T) {
 					    id = "UBUNTU_20_04_64BIT"
 					  }
 					  root_disk_storage_type = "CENTRAL"
+					  root_disk_size         = 5
 					}
 					`,
 					ExpectError: regexp.MustCompile(
@@ -608,6 +646,7 @@ func TestAccPublicCloudInstanceResource(t *testing.T) {
 					    id = "UBUNTU_20_04_64BIT"
 					  }
 					  root_disk_storage_type = "CENTRAL"
+					  root_disk_size         = 5
 					}
 					`,
 				},
@@ -637,6 +676,7 @@ func TestAccPublicCloudInstanceResource(t *testing.T) {
 					    id = "UBUNTU_20_04_64BIT"
 					  }
 					  root_disk_storage_type = "CENTRAL"
+					  root_disk_size         = 5
 					  market_app_id = "test"
 					}
 					`,

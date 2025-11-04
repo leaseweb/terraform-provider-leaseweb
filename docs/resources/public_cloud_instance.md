@@ -26,6 +26,7 @@ resource "leaseweb_public_cloud_instance" "example" {
   reference              = "my webserver"
   region                 = "eu-west-3"
   root_disk_storage_type = "CENTRAL"
+  root_disk_size         = 5
   type                   = "lsw.m3.large"
   private_network        = true
 }
@@ -47,6 +48,7 @@ resource "leaseweb_public_cloud_instance" "example" {
   - *eu-west-2*
   - *ca-central-1*
   - *ap-northeast-1*
+- `root_disk_size` (Number) The root disk's size in GB. Must be at least 5 GB for Linux and FreeBSD instances and 50 GB for Windows instances. The maximum size is 1000 GB
 - `root_disk_storage_type` (String) The root disk's storage type. Can be *LOCAL* or *CENTRAL*. **WARNING!** Changing this value once running will cause this instance to be destroyed and a new one to be created.
 - `type` (String) **WARNING!** Changing this value once running will cause this instance to be destroyed and a new one to be created. Valid options are 
   - *lsw.m3.large*
@@ -123,13 +125,22 @@ resource "leaseweb_public_cloud_instance" "example" {
   - *lsw.r6a.12xlarge*
   - *lsw.r6a.16xlarge*
   - *lsw.r6a.24xlarge*
+  - *lsw.g6.xlarge*
+  - *lsw.g6.2xlarge*
+  - *lsw.g6.4xlarge*
+  - *lsw.g6.8xlarge*
+  - *lsw.g6.12xlarge*
+  - *lsw.g6.16xlarge*
+  - *lsw.g6.18xlarge*
+  - *lsw.g6.24xlarge*
+  - *lsw.gr6.4xlarge*
+  - *lsw.gr6.8xlarge*
 
 ### Optional
 
 - `has_private_network` (Boolean) Indicates whether the instance is connected to a private network
 - `market_app_id` (String) Market App ID that must be installed into the instance. **WARNING!** Changing this value once running will cause this instance to be destroyed and a new one to be created.
 - `reference` (String) The identifying name set to the instance
-- `root_disk_size` (Number) The root disk's size in GB. Must be at least 5 GB for Linux and FreeBSD instances and 50 GB for Windows instances. The maximum size is 1000 GB
 
 ### Read-Only
 
@@ -149,7 +160,6 @@ Required:
   - *3*
   - *6*
   - *12*
-  - *24*
 - `term` (Number) Contract term (in months). Used only when type is *MONTHLY*. Valid options are 
   - *0*
   - *1*
