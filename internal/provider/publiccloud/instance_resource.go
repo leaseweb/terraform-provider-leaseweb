@@ -76,6 +76,8 @@ type instanceResourceModel struct {
 	Contract            types.Object `tfsdk:"contract"`
 	MarketAppID         types.String `tfsdk:"market_app_id"`
 	HasPrivateNetwork   types.Bool   `tfsdk:"has_private_network"`
+	SshKey              types.String `tfsdk:"ssh_key"`
+	UserData            types.String `tfsdk:"user_data"`
 }
 
 func adaptInstanceDetailsToInstanceResource(
@@ -225,11 +227,20 @@ func (i *instanceResource) Create(
 		plan.RootDiskSize.ValueInt32(),
 		publiccloud.StorageType(plan.RootDiskStorageType.ValueString()),
 	)
+
 	opts.SetContractTerm(publiccloud.ContractTerm(contract.Term.ValueInt32()))
 	opts.SetBillingFrequency(publiccloud.BillingFrequency(contract.BillingFrequency.ValueInt32()))
 
 	opts.MarketAppId = utils.AdaptStringPointerValueToNullableString(plan.MarketAppID)
 	opts.Reference = utils.AdaptStringPointerValueToNullableString(plan.Reference)
+
+	if !plan.SshKey.IsNull() && !plan.SshKey.IsUnknown() {
+		opts.SetSshKey(plan.SshKey.ValueString())
+	}
+
+	if !plan.UserData.IsNull() && !plan.UserData.IsUnknown() {
+		opts.SetUserData(plan.UserData.ValueString())
+	}
 
 	instance, httpResponse, err := i.PubliccloudAPI.LaunchInstance(ctx).
 		LaunchInstanceOpts(*opts).
@@ -286,6 +297,16 @@ func (i *instanceResource) Create(
 		return
 	}
 
+	// Because get instance does not return either the SSH key or UserData
+	// we have to set them from config to avoid terraform from failing because of mismatched state
+	if !plan.SshKey.IsUnknown() && !plan.SshKey.IsNull() {
+		state.SshKey = plan.SshKey
+	}
+
+	if !plan.UserData.IsUnknown() && !plan.UserData.IsNull() {
+		state.UserData = plan.UserData
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, state)...)
 
 }
@@ -322,6 +343,7 @@ func (i *instanceResource) Delete(
 	if err != nil {
 		utils.SdkError(ctx, &resp.Diagnostics, err, httpResponse)
 	}
+
 }
 
 func (i *instanceResource) ImportState(
@@ -363,6 +385,15 @@ func (i *instanceResource) Read(
 	)
 	if resp.Diagnostics.HasError() {
 		return
+	}
+
+	// Because we don't get updated info from GetInstance
+	// we have to set the properties again, from known state
+	if !state.SshKey.IsUnknown() {
+		newState.SshKey = state.SshKey
+	}
+	if !state.UserData.IsUnknown() {
+		newState.UserData = state.UserData
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, newState)...)
@@ -717,6 +748,33 @@ func (i *instanceResource) Schema(
 				Computed:    true,
 				Optional:    true,
 				Description: "Indicates whether the instance is connected to a private network",
+			},
+			"ssh_key": schema.StringAttribute{
+				Optional:    true,
+				Sensitive:   true,
+				Description: "Public SSH key to be installed into the instance. Cannot be used if user_data is provided.",
+				Validators: []validator.String{
+					stringvalidator.ConflictsWith(
+						path.MatchRoot("user_data"),
+					),
+				},
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+					stringplanmodifier.RequiresReplace(),
+				},
+			},
+			"user_data": schema.StringAttribute{
+				Optional:    true,
+				Description: "User data to be installed into the instance. Cannot be used if ssh_key is provided.",
+				Validators: []validator.String{
+					stringvalidator.ConflictsWith(
+						path.MatchRoot("ssh_key"),
+					),
+				},
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 		},
 	}

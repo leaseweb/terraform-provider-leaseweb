@@ -141,6 +141,8 @@ resource "leaseweb_public_cloud_instance" "example" {
 - `has_private_network` (Boolean) Indicates whether the instance is connected to a private network
 - `market_app_id` (String) Market App ID that must be installed into the instance. **WARNING!** Changing this value once running will cause this instance to be destroyed and a new one to be created.
 - `reference` (String) The identifying name set to the instance
+- `ssh_key` (String, Sensitive) Public SSH key to be installed into the instance. Cannot be used if user_data is provided.
+- `user_data` (String) User data to be installed into the instance. Cannot be used if ssh_key is provided.
 
 ### Read-Only
 
