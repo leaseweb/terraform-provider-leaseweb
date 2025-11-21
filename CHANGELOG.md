@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.30.0](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.29.0...v1.30.0) (2025-11-21)
+
+
+### Features
+
+* add ssh key and userdata to instance ([#467](https://github.com/leaseweb/terraform-provider-leaseweb/issues/467)) ([785e75a](https://github.com/leaseweb/terraform-provider-leaseweb/commit/785e75a7601e894c145d0ef0ddf381121fc64028))
+
 ## [1.29.0](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.28.1...v1.29.0) (2025-11-04)
 
 
