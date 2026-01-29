@@ -9,7 +9,7 @@ require (
 	github.com/hashicorp/terraform-plugin-go v0.29.0
 	github.com/hashicorp/terraform-plugin-log v0.10.0
 	github.com/hashicorp/terraform-plugin-testing v1.14.0
-	github.com/leaseweb/leaseweb-go-sdk/dedicatedserver/v2 v2.0.5
+	github.com/leaseweb/leaseweb-go-sdk/dedicatedserver/v2 v2.0.8
 	github.com/leaseweb/leaseweb-go-sdk/dns v1.3.0
 	github.com/leaseweb/leaseweb-go-sdk/ipmgmt v1.0.0
 	github.com/leaseweb/leaseweb-go-sdk/publiccloud v0.0.12
