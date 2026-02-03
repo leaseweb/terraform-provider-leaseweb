@@ -18,7 +18,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@commitlint/cli": "20.3.1",
-    "@commitlint/config-conventional": "20.3.1",
+    "@commitlint/config-conventional": "20.4.1",
     "@stoplight/prism-cli": "5.14.2",
     "husky": "9.1.7",
     "lint-staged": "16.2.7",
