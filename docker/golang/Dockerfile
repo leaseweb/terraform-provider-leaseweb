@@ -1,4 +1,4 @@
-FROM golang:1.26rc2-bookworm AS base
+FROM golang:1.26rc3-bookworm AS base
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN wget -q -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg \
