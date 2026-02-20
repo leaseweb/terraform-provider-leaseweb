@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.31.0](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.30.0...v1.31.0) (2026-02-20)
+
+
+### Features
+
+* mark password fields as sensitive in dedicated server resources ([#515](https://github.com/leaseweb/terraform-provider-leaseweb/issues/515)) ([8f2fa72](https://github.com/leaseweb/terraform-provider-leaseweb/commit/8f2fa7230a53f9775869951b8b3fcdf29a61938c)), closes [#6](https://github.com/leaseweb/terraform-provider-leaseweb/issues/6)
+
 ## [1.30.0](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.29.0...v1.30.0) (2025-11-21)
 
 
