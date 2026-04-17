@@ -1,1 +1,1 @@
-FROM stoplight/prism:5.14.3@sha256:fab47aee53c3007facd5d23e7957b1fc312b30dddad27bf570c2cb4a51c5f959
+FROM stoplight/prism:5.15.9@sha256:b5d38cea6fc64970e4756dd30611770587cc84d6f4f2a8f83bec72452b226ded
