@@ -113,8 +113,8 @@ github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3x
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0 h1:45sCR5RtlFHMR4UwH9sdQ5TC8v0qDQCHnXt+kaKSTVE=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
-github.com/leaseweb/leaseweb-go-sdk/dedicatedserver/v2 v2.0.5 h1:tWpQfxtYy3VeYVkqs1futEjc3k5lkinVWajCswvOVgg=
-github.com/leaseweb/leaseweb-go-sdk/dedicatedserver/v2 v2.0.5/go.mod h1:D/dX8az1mr8VKxIRL1jrg6wR+vReaF45kp06R2VnvmA=
+github.com/leaseweb/leaseweb-go-sdk/dedicatedserver/v2 v2.0.8 h1:oMns4TlxTB2L0SSrpoX4Cml6KkQEXzhivgH7FqkG4VQ=
+github.com/leaseweb/leaseweb-go-sdk/dedicatedserver/v2 v2.0.8/go.mod h1:VY/vI0HHKZJ4hbh2FbFQzjVznmhsY/ydKWjcVgBYbK4=
 github.com/leaseweb/leaseweb-go-sdk/dns v1.3.0 h1:akj/mIr0L0PUDQ2xxPEzcWqdNztcOBYnKeHKYhv1BqA=
 github.com/leaseweb/leaseweb-go-sdk/dns v1.3.0/go.mod h1:ntxqh2fT7XDwjPLNsWtq6tTjwjL/75llxnbzEZvvzIo=
 github.com/leaseweb/leaseweb-go-sdk/ipmgmt v1.0.0 h1:R+ZC7t3vtAoeRxSH3KcsR8vNF5NgaXy606vobn++cdU=
