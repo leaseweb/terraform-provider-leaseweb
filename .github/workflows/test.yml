@@ -68,7 +68,7 @@ jobs:
     steps:
       - uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v6.0.1
       - run: cp .env.dist docker/.env
-      - uses: hoverkraft-tech/compose-action@v2.4.3
+      - uses: hoverkraft-tech/compose-action@v2.5.0
         with:
           compose-file: "docker/docker-compose-acc.yml"
       - uses: actions/setup-go@7a3fe6cf4cb3a834922a1244abfce67bcef6a0c5 # v6.2.0
