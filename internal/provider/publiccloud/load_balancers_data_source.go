@@ -46,7 +46,7 @@ func (l *loadBalancersDataSource) Schema(
 	response *datasource.SchemaResponse,
 ) {
 	response.Schema = schema.Schema{
-		Description: utils.BetaDescription,
+		Description: "List all public cloud load balancers",
 		Attributes: map[string]schema.Attribute{
 			"load_balancers": schema.ListNestedAttribute{
 				Computed: true,

@@ -3,12 +3,12 @@
 page_title: "leaseweb_public_cloud_load_balancer_listeners Data Source - leaseweb"
 subcategory: ""
 description: |-
-  Warning: This functionality is in BETA. Documentation might be incorrect or incomplete. Functionality might change with the final release.
+  List public cloud load balancer listeners that belong to the load balancer
 ---
 
 # leaseweb_public_cloud_load_balancer_listeners (Data Source)
 
-**Warning:** This functionality is in BETA. Documentation might be incorrect or incomplete. Functionality might change with the final release.
+List public cloud load balancer listeners that belong to the load balancer
 
 ## Example Usage
 
