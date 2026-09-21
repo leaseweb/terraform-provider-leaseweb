@@ -49,7 +49,7 @@ resource "leaseweb_dedicated_server_installation" "example" {
 - `device` (String) Block devices in a disk set in which the partitions will be installed. Supported values are any disk set id, `SATA_SAS` or `NVME`.
 - `hostname` (String) Hostname to be used in your installation
 - `partitions` (Attributes List) (see [below for nested schema](#nestedatt--partitions))
-- `password` (String) Server root password. If not provided, it would be automatically generated
+- `password` (String, Sensitive) Server root password. If not provided, it would be automatically generated
 - `post_install_script` (String) A valid bash script to run right after the installation.
 - `power_cycle` (Boolean) If true, allows system reboots to happen automatically within the process. Otherwise, you should do them manually
 - `raid` (Attributes) (see [below for nested schema](#nestedatt--raid))

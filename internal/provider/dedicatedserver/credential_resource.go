@@ -71,6 +71,7 @@ func (c *credentialResource) Schema(
 			},
 			"password": schema.StringAttribute{
 				Required:    true,
+				Sensitive:   true,
 				Description: `The password for the credentials`,
 			},
 		},

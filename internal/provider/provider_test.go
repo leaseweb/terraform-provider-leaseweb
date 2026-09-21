@@ -8,10 +8,12 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
+	frameworkresource "github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/leaseweb/terraform-provider-leaseweb/internal/provider/dedicatedserver"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -77,6 +79,38 @@ func TestLeasewebProvider_Schema(t *testing.T) {
 		t,
 		schemaResponse.Schema.Attributes["token"].IsSensitive(),
 		"token is sensitive",
+	)
+}
+
+func TestDedicatedServerCredentialResource_Schema(t *testing.T) {
+	credentialResource := dedicatedserver.NewCredentialResource()
+	schemaResponse := frameworkresource.SchemaResponse{}
+	credentialResource.Schema(
+		context.TODO(),
+		frameworkresource.SchemaRequest{},
+		&schemaResponse,
+	)
+
+	assert.True(
+		t,
+		schemaResponse.Schema.Attributes["password"].IsSensitive(),
+		"password is sensitive",
+	)
+}
+
+func TestDedicatedServerInstallationResource_Schema(t *testing.T) {
+	installationResource := dedicatedserver.NewInstallationResource()
+	schemaResponse := frameworkresource.SchemaResponse{}
+	installationResource.Schema(
+		context.TODO(),
+		frameworkresource.SchemaRequest{},
+		&schemaResponse,
+	)
+
+	assert.True(
+		t,
+		schemaResponse.Schema.Attributes["password"].IsSensitive(),
+		"password is sensitive",
 	)
 }
 

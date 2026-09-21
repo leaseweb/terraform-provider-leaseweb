@@ -206,6 +206,7 @@ func (i *installationResource) Schema(
 			"password": schema.StringAttribute{
 				Description: "Server root password. If not provided, it would be automatically generated",
 				Optional:    true,
+				Sensitive:   true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
