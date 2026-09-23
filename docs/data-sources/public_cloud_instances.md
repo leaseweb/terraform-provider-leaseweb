@@ -3,12 +3,12 @@
 page_title: "leaseweb_public_cloud_instances Data Source - leaseweb"
 subcategory: ""
 description: |-
-  Warning: This functionality is in BETA. Documentation might be incorrect or incomplete. Functionality might change with the final release.
+  List all public cloud instances
 ---
 
 # leaseweb_public_cloud_instances (Data Source)
 
-**Warning:** This functionality is in BETA. Documentation might be incorrect or incomplete. Functionality might change with the final release.
+List all public cloud instances
 
 ## Example Usage
 

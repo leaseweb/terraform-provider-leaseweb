@@ -84,7 +84,7 @@ before committing anything or the commit will fail.
 
 ### API Stability
 
-Given that the public cloud API is currently in its beta version, we are maintaining the Terraform plugin in beta as well, despite the stability of our Dedicated Server API.
+All underlying APIs are now stable and production ready. The Terraform plugin is no longer in beta.
 
 ## Architecture
 
