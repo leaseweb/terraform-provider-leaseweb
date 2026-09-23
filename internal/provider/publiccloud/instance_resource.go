@@ -577,7 +577,7 @@ func (i *instanceResource) Schema(
 	warningError := "**WARNING!** Changing this value once running will cause this instance to be destroyed and a new one to be created."
 
 	resp.Schema = schema.Schema{
-		Description: utils.BetaDescription,
+		Description: "Manage public cloud instance",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,

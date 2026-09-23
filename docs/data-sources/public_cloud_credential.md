@@ -3,12 +3,12 @@
 page_title: "leaseweb_public_cloud_credential Data Source - leaseweb"
 subcategory: ""
 description: |-
-  Warning: This functionality is in BETA. Documentation might be incorrect or incomplete. Functionality might change with the final release.
+  Get public cloud credential
 ---
 
 # leaseweb_public_cloud_credential (Data Source)
 
-**Warning:** This functionality is in BETA. Documentation might be incorrect or incomplete. Functionality might change with the final release.
+Get public cloud credential
 
 ## Example Usage
 
