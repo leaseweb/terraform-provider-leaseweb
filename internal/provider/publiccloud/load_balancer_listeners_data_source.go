@@ -34,7 +34,7 @@ func (l *loadBalancerListenersDataSource) Schema(
 	response *datasource.SchemaResponse,
 ) {
 	response.Schema = schema.Schema{
-		Description: utils.BetaDescription,
+		Description: "List public cloud load balancer listeners that belong to the load balancer",
 		Attributes: map[string]schema.Attribute{
 			"load_balancer_id": schema.StringAttribute{
 				Required:    true,
