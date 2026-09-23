@@ -45,7 +45,7 @@ func (c *credentialResource) Schema(
 	resp *resource.SchemaResponse,
 ) {
 	resp.Schema = schema.Schema{
-		Description: utils.BetaDescription,
+		Description: "Manage public cloud credential",
 		Attributes: map[string]schema.Attribute{
 			"instance_id": schema.StringAttribute{
 				Required:    true,
