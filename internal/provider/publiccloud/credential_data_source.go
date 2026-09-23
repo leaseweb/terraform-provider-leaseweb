@@ -41,7 +41,7 @@ func (d *credentialDataSource) Schema(
 	resp *datasource.SchemaResponse,
 ) {
 	resp.Schema = schema.Schema{
-		Description: utils.BetaDescription,
+		Description: "Get public cloud credential",
 		Attributes: map[string]schema.Attribute{
 			"instance_id": schema.StringAttribute{
 				Description: "The ID of the instance.",
