@@ -1,0 +1,2462 @@
+openapi: 3.0.0
+info:
+  contact: {}
+  description: |
+    > The base URL for this API is: **https://api.leaseweb.com**<br> <div class="badge" style="margin-right: 0.5rem;">BETA</div>
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  title: Object Storage
+  version: v1
+  x-logo:
+    altText: Leaseweb developer documentation
+    backgroundColor: "#5484c6"
+    href: https://developer.leaseweb.com
+    url: https://developer.leaseweb.com/images/logo.png
+servers:
+- url: https://api.leaseweb.com/objectStorage/v1
+security:
+- X-LSW-Auth: []
+tags:
+- description: |
+    The API uses standard HTTP status codes to indicate the success or failure of the API call. The response will be JSON. Most APIs use the following format:
+
+    ```json
+    {
+        "errorCode": "APP00800",
+        "errorMessage": "The connection with the DB cannot be established.",
+        "correlationId": "550e8400-e29b-41d4-a716-446655440000",
+        "userMessage": "Cannot handle your request at the moment. Please try again later.",
+        "reference": "https://developer.leaseweb.com/errors/APP00800"
+    }
+    ```
+  name: Errors
+  x-traitTag: true
+- description: |
+    Authentication for the APIs is required. To authenticate your call, you will need to sent your API key as `X-LSW-Auth` header.
+
+    You can generate API keys in the [Customer Portal](https://secure.leaseweb.com/api-client-management/).
+  name: API Key Authentication
+  x-traitTag: true
+- description: "Manage Object Storage resources including buckets, users, groups,\
+    \ access keys, credentials, and metrics."
+  name: Object Storage
+paths:
+  /objectStorages:
+    get:
+      description: Show all objectStorage products.
+      operationId: getObjectStorageList
+      parameters:
+      - description: Limit the number of results returned.
+        explode: true
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 10
+          type: integer
+        style: form
+      - description: Return results starting from the given offset.
+        explode: true
+        in: query
+        name: offset
+        required: false
+        schema:
+          default: 0
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                _metadata:
+                  limit: 10
+                  offset: 0
+                  totalCount: 2
+                objectStorages:
+                - id: "12316650"
+                  customerId: "10085996"
+                  salesOrgId: "2000"
+                  contractId: "42001021000100"
+                  quantity: 100GB
+                  description: "Committed space: 100GB."
+                  regionUrl: https://nl.object-storage.io
+                - id: "12316651"
+                  customerId: "10085996"
+                  salesOrgId: "2000"
+                  contractId: "42001021000100"
+                  quantity: 100GB
+                  description: "Committed space: 100GB."
+                  regionUrl: https://nl.object-storage.io
+              schema:
+                $ref: "#/components/schemas/getObjectStorageListResult"
+          description: OK
+        "401":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "401"
+                errorMessage: You are not authorized to view this resource.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Authorized.
+        "403":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "403"
+                errorMessage: Access to the requested resource is forbidden.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Forbidden.
+        "500":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "500"
+                errorMessage: '''The API could not handle your request at this time.'
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Internal Server Error.
+        "503":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "503"
+                errorMessage: The API is not available at the moment.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Service Unavailable.
+      security:
+      - X-LSW-Auth: []
+      summary: List all Object Storages
+      tags:
+      - objectstorage
+  /objectStorages/{objectStorageId}/users:
+    get:
+      description: Show tenant users for the given ObjectStorage product.
+      operationId: getObjectStorageUserList
+      parameters:
+      - description: The id of the ObjectStorage.
+        example: "10242480"
+        explode: false
+        in: path
+        name: objectStorageId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                users:
+                - id: d5f82e19-6a4c-4b3d-a890-1f2c3d4e5f60
+                  fullName: Root
+                  uniqueName: root
+                  groups: []
+                - id: 9576bc36-84e2-4ed7-92ff-6bb8fa25a2d5
+                  fullName: test
+                  uniqueName: user/test
+                  groups:
+                  - 5e479608-e62d-4936-9095-6f3be82b564e
+              schema:
+                $ref: "#/components/schemas/getObjectStorageUserListResult"
+          description: OK
+        "401":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "401"
+                errorMessage: You are not authorized to view this resource.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Authorized.
+        "403":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "403"
+                errorMessage: Access to the requested resource is forbidden.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Forbidden.
+        "404":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "404"
+                errorMessage: Resource not found
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Found.
+        "500":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "500"
+                errorMessage: '''The API could not handle your request at this time.'
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Internal Server Error.
+        "503":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "503"
+                errorMessage: The API is not available at the moment.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Service Unavailable.
+      security:
+      - X-LSW-Auth: []
+      summary: List object storage users
+      tags:
+      - objectstorage
+    post:
+      description: Create tenant user for the given ObjectStorage product.
+      operationId: createObjectStorageUser
+      parameters:
+      - description: The id of the ObjectStorage.
+        example: "10242480"
+        explode: false
+        in: path
+        name: objectStorageId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            example:
+              fullName: testUser
+              groups:
+              - 5e479608-e62d-4936-9095-6f3be82b564e
+              uniqueName: user/testUser
+            schema:
+              $ref: "#/components/schemas/createObjectStorageUserOpts"
+      responses:
+        "201":
+          content:
+            application/json:
+              example:
+                fullName: testUser
+                groups:
+                - 5e479608-e62d-4936-9095-6f3be82b564e
+                id: c7e4a1f2-8b3d-4e9c-a5f7-2d6b9e0c1a83
+                uniqueName: user/testUser
+              schema:
+                $ref: "#/components/schemas/user"
+          description: Created
+        "400":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "400"
+                errorDetails: {}
+                errorMessage: The API could not interpret your request correctly.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Bad Request.
+        "401":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "401"
+                errorMessage: You are not authorized to view this resource.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Authorized.
+        "403":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "403"
+                errorMessage: Access to the requested resource is forbidden.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Forbidden.
+        "404":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "404"
+                errorMessage: Resource not found
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Found.
+        "500":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "500"
+                errorMessage: '''The API could not handle your request at this time.'
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Internal Server Error.
+        "503":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "503"
+                errorMessage: The API is not available at the moment.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Service Unavailable.
+      security:
+      - X-LSW-Auth: []
+      summary: Create an object storage user
+      tags:
+      - objectstorage
+  /objectStorages/{objectStorageId}/users/{userId}:
+    delete:
+      description: Delete tenant user information of the given ObjectStorage product
+        and user.
+      operationId: deleteObjectStorageUser
+      parameters:
+      - description: The id of the ObjectStorage.
+        example: "10242480"
+        explode: false
+        in: path
+        name: objectStorageId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: The user id.
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: No Content.
+        "401":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "401"
+                errorMessage: You are not authorized to view this resource.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Authorized.
+        "403":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "403"
+                errorMessage: Access to the requested resource is forbidden.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Forbidden.
+        "404":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "404"
+                errorMessage: Resource not found
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Found.
+        "500":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "500"
+                errorMessage: '''The API could not handle your request at this time.'
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Internal Server Error.
+        "503":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "503"
+                errorMessage: The API is not available at the moment.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Service Unavailable.
+      security:
+      - X-LSW-Auth: []
+      summary: Delete an object storage user
+      tags:
+      - objectstorage
+    get:
+      description: Get tenant user information of the given ObjectStorage product
+        and user.
+      operationId: getObjectStorageUser
+      parameters:
+      - description: The id of the ObjectStorage.
+        example: "10242480"
+        explode: false
+        in: path
+        name: objectStorageId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: The user id.
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                fullName: testUser
+                groups:
+                - 5e479608-e62d-4936-9095-6f3be82b564e
+                id: c7e4a1f2-8b3d-4e9c-a5f7-2d6b9e0c1a83
+                uniqueName: user/testUser
+              schema:
+                $ref: "#/components/schemas/user"
+          description: OK
+        "401":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "401"
+                errorMessage: You are not authorized to view this resource.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Authorized.
+        "403":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "403"
+                errorMessage: Access to the requested resource is forbidden.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Forbidden.
+        "404":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "404"
+                errorMessage: Resource not found
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Found.
+        "500":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "500"
+                errorMessage: '''The API could not handle your request at this time.'
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Internal Server Error.
+        "503":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "503"
+                errorMessage: The API is not available at the moment.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Service Unavailable.
+      security:
+      - X-LSW-Auth: []
+      summary: Get an object storage user
+      tags:
+      - objectstorage
+    put:
+      description: Updates tenant user information of the given ObjectStorage product
+        and user.
+      operationId: updateObjectStorageUser
+      parameters:
+      - description: The id of the ObjectStorage.
+        example: "10242480"
+        explode: false
+        in: path
+        name: objectStorageId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: The user id.
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            example:
+              fullName: testUser
+              groups:
+              - 5e479608-e62d-4936-9095-6f3be82b564e
+            schema:
+              $ref: "#/components/schemas/updateObjectStorageUserOpts"
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                fullName: testUser
+                groups:
+                - 5e479608-e62d-4936-9095-6f3be82b564e
+                id: c7e4a1f2-8b3d-4e9c-a5f7-2d6b9e0c1a83
+                uniqueName: user/testUser
+              schema:
+                $ref: "#/components/schemas/user"
+          description: OK
+        "400":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "400"
+                errorDetails: {}
+                errorMessage: The API could not interpret your request correctly.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Bad Request.
+        "401":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "401"
+                errorMessage: You are not authorized to view this resource.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Authorized.
+        "403":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "403"
+                errorMessage: Access to the requested resource is forbidden.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Forbidden.
+        "404":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "404"
+                errorMessage: Resource not found
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Found.
+        "500":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "500"
+                errorMessage: '''The API could not handle your request at this time.'
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Internal Server Error.
+        "503":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "503"
+                errorMessage: The API is not available at the moment.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Service Unavailable.
+      security:
+      - X-LSW-Auth: []
+      summary: Update an object storage user
+      tags:
+      - objectstorage
+  /objectStorages/{objectStorageId}/users/{userId}/accessKeys:
+    get:
+      description: Show tenant user access keys for the given ObjectStorage product
+        and user.
+      operationId: getObjectStorageAccessKeyList
+      parameters:
+      - description: The id of the ObjectStorage.
+        example: "10242480"
+        explode: false
+        in: path
+        name: objectStorageId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: The user id.
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                keys:
+                - accountId: "58053652363364670478"
+                  displayName: '****************ser'
+                  expiresAt: 2026-07-10T13:14:42Z
+                  id: SGKH6ZNxutUyt5e-WRxE8XiT2KiSGAkwPP1nJoyXAg==
+                - accountId: "000000000000"
+                  displayName: Root
+                  expiresAt: null
+                  id: a2fc3b8d-15e6-4f9a-b072-6c3d8e91f540
+                - accountId: "000000000001"
+                  displayName: test
+                  expiresAt: 2026-07-10T13:14:42Z
+                  id: 9576bc36-84e2-4ed7-92ff-6bb8fa25a2d5
+              schema:
+                $ref: "#/components/schemas/getObjectStorageAccessKeyListResult"
+          description: OK
+        "401":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "401"
+                errorMessage: You are not authorized to view this resource.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Authorized.
+        "403":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "403"
+                errorMessage: Access to the requested resource is forbidden.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Forbidden.
+        "404":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "404"
+                errorMessage: Resource not found
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Found.
+        "500":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "500"
+                errorMessage: '''The API could not handle your request at this time.'
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Internal Server Error.
+        "503":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "503"
+                errorMessage: The API is not available at the moment.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Service Unavailable.
+      security:
+      - X-LSW-Auth: []
+      summary: List user access keys
+      tags:
+      - objectstorage
+    post:
+      description: Create tenant user access keys for the given ObjectStorage product
+        and user.
+      operationId: createObjectStorageAccessKey
+      parameters:
+      - description: The id of the ObjectStorage.
+        example: "10242480"
+        explode: false
+        in: path
+        name: objectStorageId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: The user id.
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            example:
+              expiresAt: 1975-07-10T13:14:42Z
+            schema:
+              $ref: "#/components/schemas/createObjectStorageAccessKeyOpts"
+      responses:
+        "201":
+          content:
+            application/json:
+              example:
+                accessKey: BHGWSRW4OQ7QKIV5YTP0
+                accountId: "58053652363364670478"
+                displayName: '****************ser'
+                expiresAt: 2026-07-10T13:14:42Z
+                id: SGKH6ZNxutUyt5e-WRxE8XiT2KiSGAkwPP1nJoyXAg==
+                secretAccessKey: WsndsW+WjRz14LP6p33LTpiO6byDhK1xxswCxUvy
+              schema:
+                $ref: "#/components/schemas/createObjectStorageAccessKeyResult"
+          description: Created
+        "400":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "400"
+                errorDetails: {}
+                errorMessage: The API could not interpret your request correctly.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Bad Request.
+        "401":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "401"
+                errorMessage: You are not authorized to view this resource.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Authorized.
+        "403":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "403"
+                errorMessage: Access to the requested resource is forbidden.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Forbidden.
+        "404":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "404"
+                errorMessage: Resource not found
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Found.
+        "500":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "500"
+                errorMessage: '''The API could not handle your request at this time.'
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Internal Server Error.
+        "503":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "503"
+                errorMessage: The API is not available at the moment.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Service Unavailable.
+      security:
+      - X-LSW-Auth: []
+      summary: Create a user access key
+      tags:
+      - objectstorage
+  /objectStorages/{objectStorageId}/users/{userId}/accessKeys/{accessKeyId}:
+    delete:
+      description: "Delete tenant user access key given ObjectStorage product, user\
+        \ and access key id."
+      operationId: deleteObjectStorageAccessKey
+      parameters:
+      - description: The id of the ObjectStorage.
+        example: "10242480"
+        explode: false
+        in: path
+        name: objectStorageId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: The user id.
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: "The access key id, UUID format."
+        explode: false
+        in: path
+        name: accessKeyId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: No Content.
+        "401":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "401"
+                errorMessage: You are not authorized to view this resource.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Authorized.
+        "403":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "403"
+                errorMessage: Access to the requested resource is forbidden.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Forbidden.
+        "404":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "404"
+                errorMessage: Resource not found
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Found.
+        "500":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "500"
+                errorMessage: '''The API could not handle your request at this time.'
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Internal Server Error.
+        "503":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "503"
+                errorMessage: The API is not available at the moment.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Service Unavailable.
+      security:
+      - X-LSW-Auth: []
+      summary: Delete a user access key
+      tags:
+      - objectstorage
+  /objectStorages/{objectStorageId}/groups:
+    get:
+      description: Show tenant groups for the given ObjectStorage product.
+      operationId: getObjectStorageGroupList
+      parameters:
+      - description: The id of the ObjectStorage.
+        example: "10242480"
+        explode: false
+        in: path
+        name: objectStorageId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                groups:
+                - id: 9576bc36-84e2-4ed7-92ff-6bb8fa25a2d5
+                  displayName: allPowerful
+                  uniqueName: group/allPowerful
+                  s3Policies: "{\"Statement\": [{\"Effect\": \"Allow\",\"Action\"\
+                    : \"s3:*\",\"Resource\": \"arn:aws:s3:::*\"}]}"
+                - id: 5e479608-e62d-4936-9095-6f3be82b564e
+                  displayName: NoAccess
+                  uniqueName: group/NoAccess
+                  s3Policies: null
+              schema:
+                $ref: "#/components/schemas/getObjectStorageGroupListResult"
+          description: OK
+        "401":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "401"
+                errorMessage: You are not authorized to view this resource.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Authorized.
+        "403":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "403"
+                errorMessage: Access to the requested resource is forbidden.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Forbidden.
+        "404":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "404"
+                errorMessage: Resource not found
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Found.
+        "500":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "500"
+                errorMessage: '''The API could not handle your request at this time.'
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Internal Server Error.
+        "503":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "503"
+                errorMessage: The API is not available at the moment.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Service Unavailable.
+      security:
+      - X-LSW-Auth: []
+      summary: List object storage groups
+      tags:
+      - objectstorage
+    post:
+      description: Create tenant group for the given ObjectStorage product.
+      operationId: createObjectStorageGroup
+      parameters:
+      - description: The id of the ObjectStorage.
+        example: "10242480"
+        explode: false
+        in: path
+        name: objectStorageId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            example:
+              displayName: testGroup
+              s3Policies: null
+              uniqueName: testGroup
+            schema:
+              $ref: "#/components/schemas/createObjectStorageGroupOpts"
+      responses:
+        "201":
+          content:
+            application/json:
+              example:
+                displayName: allPowerful
+                id: 3f8fad42-73c1-4b5a-9d23-8e1f2c47b890
+                s3Policies: "{\"Statement\": [{\"Effect\": \"Deny\",\"Action\": \"\
+                  s3:*\",\"Resource\": \"arn:aws:s3:::*\"}]}"
+                uniqueName: group/allPowerful
+              schema:
+                $ref: "#/components/schemas/group"
+          description: Created
+        "400":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "400"
+                errorDetails: {}
+                errorMessage: The API could not interpret your request correctly.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Bad Request.
+        "401":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "401"
+                errorMessage: You are not authorized to view this resource.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Authorized.
+        "403":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "403"
+                errorMessage: Access to the requested resource is forbidden.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Forbidden.
+        "404":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "404"
+                errorMessage: Resource not found
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Found.
+        "500":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "500"
+                errorMessage: '''The API could not handle your request at this time.'
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Internal Server Error.
+        "503":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "503"
+                errorMessage: The API is not available at the moment.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Service Unavailable.
+      security:
+      - X-LSW-Auth: []
+      summary: Create an object storage group
+      tags:
+      - objectstorage
+  /objectStorages/{objectStorageId}/groups/{groupId}:
+    delete:
+      description: Delete tenant group of the given ObjectStorage product and group.
+      operationId: deleteObjectStorageGroup
+      parameters:
+      - description: The id of the ObjectStorage.
+        example: "10242480"
+        explode: false
+        in: path
+        name: objectStorageId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: The group id.
+        explode: false
+        in: path
+        name: groupId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: No Content.
+        "401":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "401"
+                errorMessage: You are not authorized to view this resource.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Authorized.
+        "403":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "403"
+                errorMessage: Access to the requested resource is forbidden.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Forbidden.
+        "404":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "404"
+                errorMessage: Resource not found
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Found.
+        "500":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "500"
+                errorMessage: '''The API could not handle your request at this time.'
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Internal Server Error.
+        "503":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "503"
+                errorMessage: The API is not available at the moment.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Service Unavailable.
+      security:
+      - X-LSW-Auth: []
+      summary: Delete an object storage group
+      tags:
+      - objectstorage
+    get:
+      description: Show tenant group for the given ObjectStorage product and group
+        id.
+      operationId: getObjectStorageGroup
+      parameters:
+      - description: The id of the ObjectStorage.
+        example: "10242480"
+        explode: false
+        in: path
+        name: objectStorageId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: The group id.
+        explode: false
+        in: path
+        name: groupId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                displayName: allPowerful
+                id: 3f8fad42-73c1-4b5a-9d23-8e1f2c47b890
+                s3Policies: "{\"Statement\": [{\"Effect\": \"Deny\",\"Action\": \"\
+                  s3:*\",\"Resource\": \"arn:aws:s3:::*\"}]}"
+                uniqueName: group/allPowerful
+              schema:
+                $ref: "#/components/schemas/group"
+          description: OK
+        "401":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "401"
+                errorMessage: You are not authorized to view this resource.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Authorized.
+        "403":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "403"
+                errorMessage: Access to the requested resource is forbidden.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Forbidden.
+        "404":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "404"
+                errorMessage: Resource not found
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Found.
+        "500":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "500"
+                errorMessage: '''The API could not handle your request at this time.'
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Internal Server Error.
+        "503":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "503"
+                errorMessage: The API is not available at the moment.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Service Unavailable.
+      security:
+      - X-LSW-Auth: []
+      summary: Get an object storage group
+      tags:
+      - objectstorage
+    put:
+      description: Update tenant group for the given ObjectStorage product and group
+        id.
+      operationId: updateObjectStorageGroup
+      parameters:
+      - description: The id of the ObjectStorage.
+        example: "10242480"
+        explode: false
+        in: path
+        name: objectStorageId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: The group id.
+        explode: false
+        in: path
+        name: groupId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            example:
+              displayName: testGroup
+              s3Policies: "{\"Statement\": [{\"Effect\": \"Deny\",\"Action\": \"s3:*\"\
+                ,\"Resource\": \"arn:aws:s3:::*\"}]}"
+            schema:
+              $ref: "#/components/schemas/updateObjectStorageGroupOpts"
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                displayName: allPowerful
+                id: 3f8fad42-73c1-4b5a-9d23-8e1f2c47b890
+                s3Policies: "{\"Statement\": [{\"Effect\": \"Deny\",\"Action\": \"\
+                  s3:*\",\"Resource\": \"arn:aws:s3:::*\"}]}"
+                uniqueName: group/allPowerful
+              schema:
+                $ref: "#/components/schemas/group"
+          description: OK
+        "400":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "400"
+                errorDetails: {}
+                errorMessage: The API could not interpret your request correctly.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Bad Request.
+        "401":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "401"
+                errorMessage: You are not authorized to view this resource.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Authorized.
+        "403":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "403"
+                errorMessage: Access to the requested resource is forbidden.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Forbidden.
+        "404":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "404"
+                errorMessage: Resource not found
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Found.
+        "500":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "500"
+                errorMessage: '''The API could not handle your request at this time.'
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Internal Server Error.
+        "503":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "503"
+                errorMessage: The API is not available at the moment.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Service Unavailable.
+      security:
+      - X-LSW-Auth: []
+      summary: Update an object storage group
+      tags:
+      - objectstorage
+  /objectStorages/{objectStorageId}/buckets:
+    get:
+      description: Show tenant buckets for the given ObjectStorage product.
+      operationId: getObjectStorageBucketList
+      parameters:
+      - description: The id of the ObjectStorage.
+        example: "10242480"
+        explode: false
+        in: path
+        name: objectStorageId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                buckets:
+                - name: test-bucket-01
+                  region: nl-01
+                  isVersioningEnabled: true
+                  quota:
+                    value: 1000
+                    unit: GB
+                  objectCount: 0
+                  used:
+                    value: 0
+                    unit: GB
+                  creationTime: null
+                  isBeingDeleted: false
+                - name: abcdef
+                  region: nl-01
+                  isVersioningEnabled: true
+                  quota:
+                    value: 1000000000
+                    unit: GB
+                  objectCount: 1000
+                  used:
+                    value: 500000000
+                    unit: GB
+                  creationTime: 2024-01-15T08:30:00Z
+                  isBeingDeleted: false
+                - name: emmer-public
+                  region: nl-01
+                  isVersioningEnabled: false
+                  quota: null
+                  objectCount: 0
+                  used:
+                    value: 0
+                    unit: GB
+                  creationTime: 2024-02-20T10:00:00Z
+                  isBeingDeleted: false
+                - name: emmer1
+                  region: nl-01
+                  isVersioningEnabled: true
+                  quota:
+                    value: 2000000000
+                    unit: GB
+                  objectCount: 2000
+                  used:
+                    value: 1000000000
+                    unit: GB
+                  creationTime: 2024-03-10T14:15:00Z
+                  isBeingDeleted: false
+              schema:
+                $ref: "#/components/schemas/getObjectStorageBucketListResult"
+          description: OK
+        "401":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "401"
+                errorMessage: You are not authorized to view this resource.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Authorized.
+        "403":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "403"
+                errorMessage: Access to the requested resource is forbidden.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Forbidden.
+        "404":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "404"
+                errorMessage: Resource not found
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Found.
+        "500":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "500"
+                errorMessage: '''The API could not handle your request at this time.'
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Internal Server Error.
+        "503":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "503"
+                errorMessage: The API is not available at the moment.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Service Unavailable.
+      security:
+      - X-LSW-Auth: []
+      summary: List object storage buckets
+      tags:
+      - objectstorage
+    post:
+      description: Create tenant bucket for the given ObjectStorage product.
+      operationId: createObjectStorageBucket
+      parameters:
+      - description: The id of the ObjectStorage.
+        example: "10242480"
+        explode: false
+        in: path
+        name: objectStorageId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            example:
+              isVersioningEnabled: true
+              name: test-bucket-01
+              quota: 1000
+            schema:
+              $ref: "#/components/schemas/createObjectStorageBucketOpts"
+      responses:
+        "201":
+          content:
+            application/json:
+              example:
+                creationTime: null
+                isBeingDeleted: false
+                isVersioningEnabled: true
+                name: test-bucket-01
+                objectCount: 0
+                quota:
+                  unit: GB
+                  value: 1000
+                region: nl-01
+                used:
+                  unit: GB
+                  value: 0
+              schema:
+                $ref: "#/components/schemas/bucket"
+          description: Created
+        "400":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "400"
+                errorDetails: {}
+                errorMessage: The API could not interpret your request correctly.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Bad Request.
+        "401":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "401"
+                errorMessage: You are not authorized to view this resource.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Authorized.
+        "403":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "403"
+                errorMessage: Access to the requested resource is forbidden.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Forbidden.
+        "404":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "404"
+                errorMessage: Resource not found
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Found.
+        "500":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "500"
+                errorMessage: '''The API could not handle your request at this time.'
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Internal Server Error.
+        "503":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "503"
+                errorMessage: The API is not available at the moment.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Service Unavailable.
+      security:
+      - X-LSW-Auth: []
+      summary: Create an object storage bucket
+      tags:
+      - objectstorage
+  /objectStorages/{objectStorageId}/buckets/{bucketName}:
+    delete:
+      description: Delete tenant bucket of the given ObjectStorage product and bucket.
+      operationId: deleteObjectStorageBucket
+      parameters:
+      - description: The id of the ObjectStorage.
+        example: "10242480"
+        explode: false
+        in: path
+        name: objectStorageId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: The bucket name.
+        explode: false
+        in: path
+        name: bucketName
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: No Content.
+        "401":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "401"
+                errorMessage: You are not authorized to view this resource.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Authorized.
+        "403":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "403"
+                errorMessage: Access to the requested resource is forbidden.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Forbidden.
+        "404":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "404"
+                errorMessage: Resource not found
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Found.
+        "500":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "500"
+                errorMessage: '''The API could not handle your request at this time.'
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Internal Server Error.
+        "503":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "503"
+                errorMessage: The API is not available at the moment.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Service Unavailable.
+      security:
+      - X-LSW-Auth: []
+      summary: Delete an object storage bucket
+      tags:
+      - objectstorage
+    put:
+      description: Update tenant bucket for the given ObjectStorage product and bucket
+        name.
+      operationId: updateObjectStorageBucket
+      parameters:
+      - description: The id of the ObjectStorage.
+        example: "10242480"
+        explode: false
+        in: path
+        name: objectStorageId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: The bucket name.
+        explode: false
+        in: path
+        name: bucketName
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            example:
+              isVersioningEnabled: true
+              quota: 1000
+            schema:
+              $ref: "#/components/schemas/updateObjectStorageBucketOpts"
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                creationTime: 2024-01-15T08:30:00Z
+                isBeingDeleted: false
+                isVersioningEnabled: true
+                name: test-bucket-01
+                objectCount: 1000
+                quota:
+                  unit: GB
+                  value: 1000
+                region: nl-01
+                used:
+                  unit: GB
+                  value: 250
+              schema:
+                $ref: "#/components/schemas/bucket"
+          description: OK
+        "400":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "400"
+                errorDetails: {}
+                errorMessage: The API could not interpret your request correctly.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Bad Request.
+        "401":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "401"
+                errorMessage: You are not authorized to view this resource.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Authorized.
+        "403":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "403"
+                errorMessage: Access to the requested resource is forbidden.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Forbidden.
+        "404":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "404"
+                errorMessage: Resource not found
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Not Found.
+        "500":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "500"
+                errorMessage: '''The API could not handle your request at this time.'
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Internal Server Error.
+        "503":
+          content:
+            application/json:
+              example:
+                correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+                errorCode: "503"
+                errorMessage: The API is not available at the moment.
+              schema:
+                $ref: "#/components/schemas/errorResult"
+          description: Service Unavailable.
+      security:
+      - X-LSW-Auth: []
+      summary: Update an object storage bucket
+      tags:
+      - objectstorage
+components:
+  parameters:
+    limit:
+      description: Limit the number of results returned.
+      explode: true
+      in: query
+      name: limit
+      required: false
+      schema:
+        default: 10
+        type: integer
+      style: form
+    offset:
+      description: Return results starting from the given offset.
+      explode: true
+      in: query
+      name: offset
+      required: false
+      schema:
+        default: 0
+        type: integer
+      style: form
+    objectStorageId:
+      description: The id of the ObjectStorage.
+      example: "10242480"
+      explode: false
+      in: path
+      name: objectStorageId
+      required: true
+      schema:
+        type: string
+      style: simple
+    userId:
+      description: The user id.
+      explode: false
+      in: path
+      name: userId
+      required: true
+      schema:
+        type: string
+      style: simple
+    accessKeyId:
+      description: "The access key id, UUID format."
+      explode: false
+      in: path
+      name: accessKeyId
+      required: true
+      schema:
+        type: string
+      style: simple
+    groupId:
+      description: The group id.
+      explode: false
+      in: path
+      name: groupId
+      required: true
+      schema:
+        type: string
+      style: simple
+    bucketName:
+      description: The bucket name.
+      explode: false
+      in: path
+      name: bucketName
+      required: true
+      schema:
+        type: string
+      style: simple
+  responses:
+    "204":
+      description: No Content.
+    "400":
+      content:
+        application/json:
+          example:
+            correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+            errorCode: "400"
+            errorDetails: {}
+            errorMessage: The API could not interpret your request correctly.
+          schema:
+            $ref: "#/components/schemas/errorResult"
+      description: Bad Request.
+    "401":
+      content:
+        application/json:
+          example:
+            correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+            errorCode: "401"
+            errorMessage: You are not authorized to view this resource.
+          schema:
+            $ref: "#/components/schemas/errorResult"
+      description: Not Authorized.
+    "403":
+      content:
+        application/json:
+          example:
+            correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+            errorCode: "403"
+            errorMessage: Access to the requested resource is forbidden.
+          schema:
+            $ref: "#/components/schemas/errorResult"
+      description: Forbidden.
+    "404":
+      content:
+        application/json:
+          example:
+            correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+            errorCode: "404"
+            errorMessage: Resource not found
+          schema:
+            $ref: "#/components/schemas/errorResult"
+      description: Not Found.
+    "500":
+      content:
+        application/json:
+          example:
+            correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+            errorCode: "500"
+            errorMessage: '''The API could not handle your request at this time.'
+          schema:
+            $ref: "#/components/schemas/errorResult"
+      description: Internal Server Error.
+    "503":
+      content:
+        application/json:
+          example:
+            correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
+            errorCode: "503"
+            errorMessage: The API is not available at the moment.
+          schema:
+            $ref: "#/components/schemas/errorResult"
+      description: Service Unavailable.
+  schemas:
+    getObjectStorageListResult:
+      example:
+        objectStorages:
+        - quantity: quantity
+          regionUrl: https://openapi-generator.tech
+          customerId: customerId
+          contractId: contractId
+          description: description
+          id: id
+          salesOrgId: salesOrgId
+        - quantity: quantity
+          regionUrl: https://openapi-generator.tech
+          customerId: customerId
+          contractId: contractId
+          description: description
+          id: id
+          salesOrgId: salesOrgId
+        _metadata:
+          offset: 6
+          limit: 0
+          totalCount: 1
+      properties:
+        objectStorages:
+          description: A list of object storage products.
+          items:
+            $ref: "#/components/schemas/objectStorageListItem"
+          type: array
+        _metadata:
+          $ref: "#/components/schemas/objectStorageListMetadata"
+      title: objectStorageList
+      type: object
+    errorResult:
+      example:
+        errorMessage: errorMessage
+        errorCode: errorCode
+        correlationId: correlationId
+        errorDetails:
+          key:
+          - errorDetails
+          - errorDetails
+      properties:
+        correlationId:
+          description: The correlation ID of the current request.
+          type: string
+        errorCode:
+          description: The error code.
+          type: string
+        errorMessage:
+          description: A human friendly description of the error.
+          type: string
+        errorDetails:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          title: errorDetails
+          type: object
+      type: object
+    user:
+      description: Object Storage tenant user.
+      example:
+        uniqueName: uniqueName
+        fullName: fullName
+        groups:
+        - groups
+        - groups
+        id: id
+      properties:
+        id:
+          description: The user id.
+          type: string
+        fullName:
+          description: The user full name.
+          type: string
+        uniqueName:
+          description: The user unique name identifier.
+          type: string
+        groups:
+          description: The user control groups this user belongs to.
+          items:
+            type: string
+          type: array
+      title: user
+      type: object
+    getObjectStorageUserListResult:
+      example:
+        users:
+        - uniqueName: uniqueName
+          fullName: fullName
+          groups:
+          - groups
+          - groups
+          id: id
+        - uniqueName: uniqueName
+          fullName: fullName
+          groups:
+          - groups
+          - groups
+          id: id
+      properties:
+        users:
+          description: A list of tenant users.
+          items:
+            $ref: "#/components/schemas/user"
+          type: array
+      title: objectStorageUserList
+      type: object
+    createObjectStorageUserOpts:
+      properties:
+        fullName:
+          description: The full name of the user.
+          maxLength: 128
+          minLength: 1
+          type: string
+        uniqueName:
+          description: The unique name identifier for the user.
+          maxLength: 1024
+          minLength: 1
+          type: string
+        groups:
+          description: Array of group UUIDs to assign the user to.
+          items:
+            format: uuid
+            type: string
+          type: array
+      required:
+      - fullName
+      - groups
+      - uniqueName
+      title: createObjectStorageUserOpts
+      type: object
+    updateObjectStorageUserOpts:
+      properties:
+        fullName:
+          description: The full name of the user.
+          maxLength: 128
+          minLength: 1
+          type: string
+        groups:
+          description: Array of group UUIDs to assign the user to.
+          items:
+            format: uuid
+            type: string
+          type: array
+      required:
+      - fullName
+      - groups
+      title: updateObjectStorageUserOpts
+      type: object
+    accessKey:
+      description: Tenant user keys.
+      example:
+        accountId: accountId
+        displayName: displayName
+        id: id
+        expiresAt: 2000-01-23T04:56:07.000+00:00
+      properties:
+        id:
+          description: The access key id.
+          type: string
+        displayName:
+          description: The access key name.
+          type: string
+        accountId:
+          description: The account identifier this key belongs to.
+          type: string
+        expiresAt:
+          description: "The datetime string of the key expire date if it has been\
+            \ set, null otherwise."
+          format: date-time
+          nullable: true
+          type: string
+      title: accessKey
+      type: object
+    getObjectStorageAccessKeyListResult:
+      example:
+        keys:
+        - accountId: accountId
+          displayName: displayName
+          id: id
+          expiresAt: 2000-01-23T04:56:07.000+00:00
+        - accountId: accountId
+          displayName: displayName
+          id: id
+          expiresAt: 2000-01-23T04:56:07.000+00:00
+      properties:
+        keys:
+          description: A list of access keys.
+          items:
+            $ref: "#/components/schemas/accessKey"
+          type: array
+      title: objectStorageAccessKeyList
+      type: object
+    createObjectStorageAccessKeyOpts:
+      properties:
+        expiresAt:
+          description: The expire date for the access key in ISO 8601 datetime format.
+            Can be null.
+          format: date-time
+          nullable: true
+          type: string
+      title: createObjectStorageAccessKeyOpts
+      type: object
+    createObjectStorageAccessKeyResult:
+      example:
+        secretAccessKey: secretAccessKey
+        accountId: accountId
+        accessKey: accessKey
+        displayName: displayName
+        id: id
+        expiresAt: 2000-01-23T04:56:07.000+00:00
+      properties:
+        id:
+          description: The access key id.
+          type: string
+        displayName:
+          description: The access key name.
+          type: string
+        accountId:
+          description: The account identifier this key belongs to.
+          type: string
+        expiresAt:
+          description: "The datetime string of the key expire date if it has been\
+            \ set, null otherwise."
+          format: date-time
+          nullable: true
+          type: string
+        accessKey:
+          description: The access key.
+          type: string
+        secretAccessKey:
+          description: The access key secret.
+          type: string
+      title: createObjectStorageAccessKeyResult
+      type: object
+    group:
+      description: Object Storage tenant group.
+      example:
+        uniqueName: uniqueName
+        s3Policies: s3Policies
+        displayName: displayName
+        id: id
+      properties:
+        id:
+          description: The group id.
+          type: string
+        displayName:
+          description: The group name.
+          type: string
+        uniqueName:
+          description: The group unique name.
+          type: string
+        s3Policies:
+          description: "A JSON-encoded IAM-style policy document (e.g. `{\"Statement\"\
+            :[{\"Effect\":\"Allow\",\"Action\":\"s3:*\",\"Resource\":\"arn:aws:s3:::*\"\
+            }]}`), or null if no policy is set."
+          nullable: true
+          type: string
+      title: group
+      type: object
+    getObjectStorageGroupListResult:
+      example:
+        groups:
+        - uniqueName: uniqueName
+          s3Policies: s3Policies
+          displayName: displayName
+          id: id
+        - uniqueName: uniqueName
+          s3Policies: s3Policies
+          displayName: displayName
+          id: id
+      properties:
+        groups:
+          description: A list of tenant groups.
+          items:
+            $ref: "#/components/schemas/group"
+          type: array
+      title: objectStorageGroupList
+      type: object
+    createObjectStorageGroupOpts:
+      properties:
+        displayName:
+          description: The display name of the group.
+          maxLength: 32
+          minLength: 1
+          type: string
+        uniqueName:
+          description: The unique name identifier for the group.
+          maxLength: 1024
+          minLength: 1
+          type: string
+        s3Policies:
+          description: Optional JSON string defining the S3 policies and permissions
+            for users in this group.
+          nullable: true
+          type: string
+      required:
+      - displayName
+      - uniqueName
+      title: createObjectStorageGroupOpts
+      type: object
+    updateObjectStorageGroupOpts:
+      properties:
+        displayName:
+          description: The display name of the group.
+          maxLength: 32
+          minLength: 1
+          type: string
+        s3Policies:
+          description: Optional JSON string defining the S3 policies and permissions
+            for users in this group.
+          nullable: true
+          type: string
+      required:
+      - displayName
+      title: updateObjectStorageGroupOpts
+      type: object
+    bucket:
+      description: Object Storage tenant bucket.
+      example:
+        objectCount: 6
+        creationTime: 2000-01-23T04:56:07.000+00:00
+        quota:
+          unit: GB
+          value: 0.8008281904610115
+        name: name
+        isBeingDeleted: true
+        used:
+          unit: GB
+          value: 1.4658129805029452
+        region: region
+        isVersioningEnabled: true
+      properties:
+        name:
+          description: The bucket name.
+          type: string
+        region:
+          description: The bucket region.
+          type: string
+        isVersioningEnabled:
+          description: Indicates if the bucket versioning is enabled.
+          type: boolean
+        quota:
+          $ref: "#/components/schemas/bucketQuota"
+        objectCount:
+          description: "The bucket object count, null if not set."
+          nullable: true
+          type: integer
+        used:
+          $ref: "#/components/schemas/bucketUsedSpace"
+        creationTime:
+          description: "The date and time the bucket was created, or null if not yet\
+            \ available."
+          format: date-time
+          nullable: true
+          type: string
+        isBeingDeleted:
+          description: Indicates if the bucket is currently being deleted.
+          type: boolean
+      title: bucket
+      type: object
+    getObjectStorageBucketListResult:
+      example:
+        buckets:
+        - objectCount: 6
+          creationTime: 2000-01-23T04:56:07.000+00:00
+          quota:
+            unit: GB
+            value: 0.8008281904610115
+          name: name
+          isBeingDeleted: true
+          used:
+            unit: GB
+            value: 1.4658129805029452
+          region: region
+          isVersioningEnabled: true
+        - objectCount: 6
+          creationTime: 2000-01-23T04:56:07.000+00:00
+          quota:
+            unit: GB
+            value: 0.8008281904610115
+          name: name
+          isBeingDeleted: true
+          used:
+            unit: GB
+            value: 1.4658129805029452
+          region: region
+          isVersioningEnabled: true
+      properties:
+        buckets:
+          description: A list of tenant buckets.
+          items:
+            $ref: "#/components/schemas/bucket"
+          type: array
+      title: objectStorageBucketList
+      type: object
+    createObjectStorageBucketOpts:
+      properties:
+        name:
+          description: "The bucket name. Must be 3–63 characters, alphanumeric and\
+            \ hyphens only."
+          maxLength: 63
+          minLength: 3
+          pattern: "^[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9]$"
+          type: string
+        isVersioningEnabled:
+          description: Indicates if versioning is enabled for the bucket.
+          type: boolean
+        quota:
+          description: "The quota for the size of the bucket in GB (1–1,000,000).\
+            \ Omit or set to null for no quota. In responses, quota is returned as\
+            \ an object with `value` and `unit` fields."
+          maximum: 1000000
+          minimum: 1
+          nullable: true
+          type: integer
+      required:
+      - isVersioningEnabled
+      - name
+      title: createObjectStorageBucketOpts
+      type: object
+    updateObjectStorageBucketOpts:
+      properties:
+        isVersioningEnabled:
+          description: Indicates if versioning is enabled for the bucket.
+          type: boolean
+        quota:
+          description: "The quota for the size of the bucket in GB (1–1,000,000)."
+          maximum: 1000000
+          minimum: 1
+          nullable: true
+          type: integer
+      required:
+      - isVersioningEnabled
+      title: updateObjectStorageBucketOpts
+      type: object
+    objectStorageListItem:
+      description: An objectStorage product.
+      example:
+        quantity: quantity
+        regionUrl: https://openapi-generator.tech
+        customerId: customerId
+        contractId: contractId
+        description: description
+        id: id
+        salesOrgId: salesOrgId
+      properties:
+        id:
+          type: string
+        customerId:
+          type: string
+        salesOrgId:
+          type: string
+        contractId:
+          type: string
+        quantity:
+          type: string
+        description:
+          type: string
+        regionUrl:
+          description: The region-specific endpoint URL for this Object Storage product.
+          format: uri
+          type: string
+      title: objectStorageListItem
+      type: object
+    objectStorageListMetadata:
+      description: Metadata about the collection.
+      example:
+        offset: 6
+        limit: 0
+        totalCount: 1
+      properties:
+        limit:
+          default: 10
+          description: The maximum number of results returned.
+          type: integer
+        offset:
+          default: 0
+          description: Results are returned starting at the given offset.
+          type: integer
+        totalCount:
+          description: The total amount of results.
+          type: integer
+      title: objectStorageListMetadata
+      type: object
+    bucketQuota:
+      description: The quota for the size of the bucket.
+      example:
+        unit: GB
+        value: 0.8008281904610115
+      nullable: true
+      properties:
+        value:
+          description: The value of the quota.
+          type: number
+        unit:
+          description: "The unit of the quota, e.g., GB."
+          enum:
+          - GB
+          type: string
+      title: bucketQuota
+      type: object
+    bucketUsedSpace:
+      description: The bucket used space.
+      example:
+        unit: GB
+        value: 1.4658129805029452
+      properties:
+        value:
+          description: The value of the used space.
+          type: number
+        unit:
+          description: "The unit of the used space, e.g., GB."
+          enum:
+          - GB
+          type: string
+      title: bucketUsedSpace
+      type: object
+  securitySchemes:
+    BearerAuth:
+      scheme: bearer
+      type: http
+    X-LSW-Auth:
+      description: API key authentication by setting `X-LSW-Auth` header.
+      in: header
+      name: X-LSW-Auth
+      type: apiKey
