@@ -14,57 +14,58 @@ info:
     href: https://developer.leaseweb.com
     url: https://developer.leaseweb.com/images/logo.png
 servers:
-- url: https://api.leaseweb.com/objectStorage/v1
+  - url: https://api.leaseweb.com/objectStorage/v1
 security:
-- X-LSW-Auth: []
+  - X-LSW-Auth: []
 tags:
-- description: |
-    The API uses standard HTTP status codes to indicate the success or failure of the API call. The response will be JSON. Most APIs use the following format:
+  - description: |
+      The API uses standard HTTP status codes to indicate the success or failure of the API call. The response will be JSON. Most APIs use the following format:
 
-    ```json
-    {
-        "errorCode": "APP00800",
-        "errorMessage": "The connection with the DB cannot be established.",
-        "correlationId": "550e8400-e29b-41d4-a716-446655440000",
-        "userMessage": "Cannot handle your request at the moment. Please try again later.",
-        "reference": "https://developer.leaseweb.com/errors/APP00800"
-    }
-    ```
-  name: Errors
-  x-traitTag: true
-- description: |
-    Authentication for the APIs is required. To authenticate your call, you will need to sent your API key as `X-LSW-Auth` header.
+      ```json
+      {
+          "errorCode": "APP00800",
+          "errorMessage": "The connection with the DB cannot be established.",
+          "correlationId": "550e8400-e29b-41d4-a716-446655440000",
+          "userMessage": "Cannot handle your request at the moment. Please try again later.",
+          "reference": "https://developer.leaseweb.com/errors/APP00800"
+      }
+      ```
+    name: Errors
+    x-traitTag: true
+  - description: |
+      Authentication for the APIs is required. To authenticate your call, you will need to sent your API key as `X-LSW-Auth` header.
 
-    You can generate API keys in the [Customer Portal](https://secure.leaseweb.com/api-client-management/).
-  name: API Key Authentication
-  x-traitTag: true
-- description: "Manage Object Storage resources including buckets, users, groups,\
-    \ access keys, credentials, and metrics."
-  name: Object Storage
+      You can generate API keys in the [Customer Portal](https://secure.leaseweb.com/api-client-management/).
+    name: API Key Authentication
+    x-traitTag: true
+  - description:
+      "Manage Object Storage resources including buckets, users, groups,\
+      \ access keys, credentials, and metrics."
+    name: Object Storage
 paths:
   /objectStorages:
     get:
       description: Show all objectStorage products.
       operationId: getObjectStorageList
       parameters:
-      - description: Limit the number of results returned.
-        explode: true
-        in: query
-        name: limit
-        required: false
-        schema:
-          default: 10
-          type: integer
-        style: form
-      - description: Return results starting from the given offset.
-        explode: true
-        in: query
-        name: offset
-        required: false
-        schema:
-          default: 0
-          type: integer
-        style: form
+        - description: Limit the number of results returned.
+          explode: true
+          in: query
+          name: limit
+          required: false
+          schema:
+            default: 10
+            type: integer
+          style: form
+        - description: Return results starting from the given offset.
+          explode: true
+          in: query
+          name: offset
+          required: false
+          schema:
+            default: 0
+            type: integer
+          style: form
       responses:
         "200":
           content:
@@ -75,20 +76,20 @@ paths:
                   offset: 0
                   totalCount: 2
                 objectStorages:
-                - id: "12316650"
-                  customerId: "10085996"
-                  salesOrgId: "2000"
-                  contractId: "42001021000100"
-                  quantity: 100GB
-                  description: "Committed space: 100GB."
-                  regionUrl: https://nl.object-storage.io
-                - id: "12316651"
-                  customerId: "10085996"
-                  salesOrgId: "2000"
-                  contractId: "42001021000100"
-                  quantity: 100GB
-                  description: "Committed space: 100GB."
-                  regionUrl: https://nl.object-storage.io
+                  - id: "12316650"
+                    customerId: "10085996"
+                    salesOrgId: "2000"
+                    contractId: "42001021000100"
+                    quantity: 100GB
+                    description: "Committed space: 100GB."
+                    regionUrl: https://nl.object-storage.io
+                  - id: "12316651"
+                    customerId: "10085996"
+                    salesOrgId: "2000"
+                    contractId: "42001021000100"
+                    quantity: 100GB
+                    description: "Committed space: 100GB."
+                    regionUrl: https://nl.object-storage.io
               schema:
                 $ref: "#/components/schemas/getObjectStorageListResult"
           description: OK
@@ -118,7 +119,7 @@ paths:
               example:
                 correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
                 errorCode: "500"
-                errorMessage: '''The API could not handle your request at this time.'
+                errorMessage: "'The API could not handle your request at this time."
               schema:
                 $ref: "#/components/schemas/errorResult"
           description: Internal Server Error.
@@ -133,39 +134,39 @@ paths:
                 $ref: "#/components/schemas/errorResult"
           description: Service Unavailable.
       security:
-      - X-LSW-Auth: []
+        - X-LSW-Auth: []
       summary: List all Object Storages
       tags:
-      - objectstorage
+        - objectstorage
   /objectStorages/{objectStorageId}/users:
     get:
       description: Show tenant users for the given ObjectStorage product.
       operationId: getObjectStorageUserList
       parameters:
-      - description: The id of the ObjectStorage.
-        example: "10242480"
-        explode: false
-        in: path
-        name: objectStorageId
-        required: true
-        schema:
-          type: string
-        style: simple
+        - description: The id of the ObjectStorage.
+          example: "10242480"
+          explode: false
+          in: path
+          name: objectStorageId
+          required: true
+          schema:
+            type: string
+          style: simple
       responses:
         "200":
           content:
             application/json:
               example:
                 users:
-                - id: d5f82e19-6a4c-4b3d-a890-1f2c3d4e5f60
-                  fullName: Root
-                  uniqueName: root
-                  groups: []
-                - id: 9576bc36-84e2-4ed7-92ff-6bb8fa25a2d5
-                  fullName: test
-                  uniqueName: user/test
-                  groups:
-                  - 5e479608-e62d-4936-9095-6f3be82b564e
+                  - id: d5f82e19-6a4c-4b3d-a890-1f2c3d4e5f60
+                    fullName: Root
+                    uniqueName: root
+                    groups: []
+                  - id: 9576bc36-84e2-4ed7-92ff-6bb8fa25a2d5
+                    fullName: test
+                    uniqueName: user/test
+                    groups:
+                      - 5e479608-e62d-4936-9095-6f3be82b564e
               schema:
                 $ref: "#/components/schemas/getObjectStorageUserListResult"
           description: OK
@@ -205,7 +206,7 @@ paths:
               example:
                 correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
                 errorCode: "500"
-                errorMessage: '''The API could not handle your request at this time.'
+                errorMessage: "'The API could not handle your request at this time."
               schema:
                 $ref: "#/components/schemas/errorResult"
           description: Internal Server Error.
@@ -220,30 +221,30 @@ paths:
                 $ref: "#/components/schemas/errorResult"
           description: Service Unavailable.
       security:
-      - X-LSW-Auth: []
+        - X-LSW-Auth: []
       summary: List object storage users
       tags:
-      - objectstorage
+        - objectstorage
     post:
       description: Create tenant user for the given ObjectStorage product.
       operationId: createObjectStorageUser
       parameters:
-      - description: The id of the ObjectStorage.
-        example: "10242480"
-        explode: false
-        in: path
-        name: objectStorageId
-        required: true
-        schema:
-          type: string
-        style: simple
+        - description: The id of the ObjectStorage.
+          example: "10242480"
+          explode: false
+          in: path
+          name: objectStorageId
+          required: true
+          schema:
+            type: string
+          style: simple
       requestBody:
         content:
           application/json:
             example:
               fullName: testUser
               groups:
-              - 5e479608-e62d-4936-9095-6f3be82b564e
+                - 5e479608-e62d-4936-9095-6f3be82b564e
               uniqueName: user/testUser
             schema:
               $ref: "#/components/schemas/createObjectStorageUserOpts"
@@ -254,7 +255,7 @@ paths:
               example:
                 fullName: testUser
                 groups:
-                - 5e479608-e62d-4936-9095-6f3be82b564e
+                  - 5e479608-e62d-4936-9095-6f3be82b564e
                 id: c7e4a1f2-8b3d-4e9c-a5f7-2d6b9e0c1a83
                 uniqueName: user/testUser
               schema:
@@ -307,7 +308,7 @@ paths:
               example:
                 correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
                 errorCode: "500"
-                errorMessage: '''The API could not handle your request at this time.'
+                errorMessage: "'The API could not handle your request at this time."
               schema:
                 $ref: "#/components/schemas/errorResult"
           description: Internal Server Error.
@@ -322,33 +323,34 @@ paths:
                 $ref: "#/components/schemas/errorResult"
           description: Service Unavailable.
       security:
-      - X-LSW-Auth: []
+        - X-LSW-Auth: []
       summary: Create an object storage user
       tags:
-      - objectstorage
+        - objectstorage
   /objectStorages/{objectStorageId}/users/{userId}:
     delete:
-      description: Delete tenant user information of the given ObjectStorage product
+      description:
+        Delete tenant user information of the given ObjectStorage product
         and user.
       operationId: deleteObjectStorageUser
       parameters:
-      - description: The id of the ObjectStorage.
-        example: "10242480"
-        explode: false
-        in: path
-        name: objectStorageId
-        required: true
-        schema:
-          type: string
-        style: simple
-      - description: The user id.
-        explode: false
-        in: path
-        name: userId
-        required: true
-        schema:
-          type: string
-        style: simple
+        - description: The id of the ObjectStorage.
+          example: "10242480"
+          explode: false
+          in: path
+          name: objectStorageId
+          required: true
+          schema:
+            type: string
+          style: simple
+        - description: The user id.
+          explode: false
+          in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+          style: simple
       responses:
         "204":
           description: No Content.
@@ -388,7 +390,7 @@ paths:
               example:
                 correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
                 errorCode: "500"
-                errorMessage: '''The API could not handle your request at this time.'
+                errorMessage: "'The API could not handle your request at this time."
               schema:
                 $ref: "#/components/schemas/errorResult"
           description: Internal Server Error.
@@ -403,32 +405,33 @@ paths:
                 $ref: "#/components/schemas/errorResult"
           description: Service Unavailable.
       security:
-      - X-LSW-Auth: []
+        - X-LSW-Auth: []
       summary: Delete an object storage user
       tags:
-      - objectstorage
+        - objectstorage
     get:
-      description: Get tenant user information of the given ObjectStorage product
+      description:
+        Get tenant user information of the given ObjectStorage product
         and user.
       operationId: getObjectStorageUser
       parameters:
-      - description: The id of the ObjectStorage.
-        example: "10242480"
-        explode: false
-        in: path
-        name: objectStorageId
-        required: true
-        schema:
-          type: string
-        style: simple
-      - description: The user id.
-        explode: false
-        in: path
-        name: userId
-        required: true
-        schema:
-          type: string
-        style: simple
+        - description: The id of the ObjectStorage.
+          example: "10242480"
+          explode: false
+          in: path
+          name: objectStorageId
+          required: true
+          schema:
+            type: string
+          style: simple
+        - description: The user id.
+          explode: false
+          in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+          style: simple
       responses:
         "200":
           content:
@@ -436,7 +439,7 @@ paths:
               example:
                 fullName: testUser
                 groups:
-                - 5e479608-e62d-4936-9095-6f3be82b564e
+                  - 5e479608-e62d-4936-9095-6f3be82b564e
                 id: c7e4a1f2-8b3d-4e9c-a5f7-2d6b9e0c1a83
                 uniqueName: user/testUser
               schema:
@@ -478,7 +481,7 @@ paths:
               example:
                 correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
                 errorCode: "500"
-                errorMessage: '''The API could not handle your request at this time.'
+                errorMessage: "'The API could not handle your request at this time."
               schema:
                 $ref: "#/components/schemas/errorResult"
           description: Internal Server Error.
@@ -493,39 +496,40 @@ paths:
                 $ref: "#/components/schemas/errorResult"
           description: Service Unavailable.
       security:
-      - X-LSW-Auth: []
+        - X-LSW-Auth: []
       summary: Get an object storage user
       tags:
-      - objectstorage
+        - objectstorage
     put:
-      description: Updates tenant user information of the given ObjectStorage product
+      description:
+        Updates tenant user information of the given ObjectStorage product
         and user.
       operationId: updateObjectStorageUser
       parameters:
-      - description: The id of the ObjectStorage.
-        example: "10242480"
-        explode: false
-        in: path
-        name: objectStorageId
-        required: true
-        schema:
-          type: string
-        style: simple
-      - description: The user id.
-        explode: false
-        in: path
-        name: userId
-        required: true
-        schema:
-          type: string
-        style: simple
+        - description: The id of the ObjectStorage.
+          example: "10242480"
+          explode: false
+          in: path
+          name: objectStorageId
+          required: true
+          schema:
+            type: string
+          style: simple
+        - description: The user id.
+          explode: false
+          in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+          style: simple
       requestBody:
         content:
           application/json:
             example:
               fullName: testUser
               groups:
-              - 5e479608-e62d-4936-9095-6f3be82b564e
+                - 5e479608-e62d-4936-9095-6f3be82b564e
             schema:
               $ref: "#/components/schemas/updateObjectStorageUserOpts"
       responses:
@@ -535,7 +539,7 @@ paths:
               example:
                 fullName: testUser
                 groups:
-                - 5e479608-e62d-4936-9095-6f3be82b564e
+                  - 5e479608-e62d-4936-9095-6f3be82b564e
                 id: c7e4a1f2-8b3d-4e9c-a5f7-2d6b9e0c1a83
                 uniqueName: user/testUser
               schema:
@@ -588,7 +592,7 @@ paths:
               example:
                 correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
                 errorCode: "500"
-                errorMessage: '''The API could not handle your request at this time.'
+                errorMessage: "'The API could not handle your request at this time."
               schema:
                 $ref: "#/components/schemas/errorResult"
           description: Internal Server Error.
@@ -603,51 +607,52 @@ paths:
                 $ref: "#/components/schemas/errorResult"
           description: Service Unavailable.
       security:
-      - X-LSW-Auth: []
+        - X-LSW-Auth: []
       summary: Update an object storage user
       tags:
-      - objectstorage
+        - objectstorage
   /objectStorages/{objectStorageId}/users/{userId}/accessKeys:
     get:
-      description: Show tenant user access keys for the given ObjectStorage product
+      description:
+        Show tenant user access keys for the given ObjectStorage product
         and user.
       operationId: getObjectStorageAccessKeyList
       parameters:
-      - description: The id of the ObjectStorage.
-        example: "10242480"
-        explode: false
-        in: path
-        name: objectStorageId
-        required: true
-        schema:
-          type: string
-        style: simple
-      - description: The user id.
-        explode: false
-        in: path
-        name: userId
-        required: true
-        schema:
-          type: string
-        style: simple
+        - description: The id of the ObjectStorage.
+          example: "10242480"
+          explode: false
+          in: path
+          name: objectStorageId
+          required: true
+          schema:
+            type: string
+          style: simple
+        - description: The user id.
+          explode: false
+          in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+          style: simple
       responses:
         "200":
           content:
             application/json:
               example:
                 keys:
-                - accountId: "58053652363364670478"
-                  displayName: '****************ser'
-                  expiresAt: 2026-07-10T13:14:42Z
-                  id: SGKH6ZNxutUyt5e-WRxE8XiT2KiSGAkwPP1nJoyXAg==
-                - accountId: "000000000000"
-                  displayName: Root
-                  expiresAt: null
-                  id: a2fc3b8d-15e6-4f9a-b072-6c3d8e91f540
-                - accountId: "000000000001"
-                  displayName: test
-                  expiresAt: 2026-07-10T13:14:42Z
-                  id: 9576bc36-84e2-4ed7-92ff-6bb8fa25a2d5
+                  - accountId: "58053652363364670478"
+                    displayName: "****************ser"
+                    expiresAt: 2026-07-10T13:14:42Z
+                    id: SGKH6ZNxutUyt5e-WRxE8XiT2KiSGAkwPP1nJoyXAg==
+                  - accountId: "000000000000"
+                    displayName: Root
+                    expiresAt: null
+                    id: a2fc3b8d-15e6-4f9a-b072-6c3d8e91f540
+                  - accountId: "000000000001"
+                    displayName: test
+                    expiresAt: 2026-07-10T13:14:42Z
+                    id: 9576bc36-84e2-4ed7-92ff-6bb8fa25a2d5
               schema:
                 $ref: "#/components/schemas/getObjectStorageAccessKeyListResult"
           description: OK
@@ -687,7 +692,7 @@ paths:
               example:
                 correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
                 errorCode: "500"
-                errorMessage: '''The API could not handle your request at this time.'
+                errorMessage: "'The API could not handle your request at this time."
               schema:
                 $ref: "#/components/schemas/errorResult"
           description: Internal Server Error.
@@ -702,32 +707,33 @@ paths:
                 $ref: "#/components/schemas/errorResult"
           description: Service Unavailable.
       security:
-      - X-LSW-Auth: []
+        - X-LSW-Auth: []
       summary: List user access keys
       tags:
-      - objectstorage
+        - objectstorage
     post:
-      description: Create tenant user access keys for the given ObjectStorage product
+      description:
+        Create tenant user access keys for the given ObjectStorage product
         and user.
       operationId: createObjectStorageAccessKey
       parameters:
-      - description: The id of the ObjectStorage.
-        example: "10242480"
-        explode: false
-        in: path
-        name: objectStorageId
-        required: true
-        schema:
-          type: string
-        style: simple
-      - description: The user id.
-        explode: false
-        in: path
-        name: userId
-        required: true
-        schema:
-          type: string
-        style: simple
+        - description: The id of the ObjectStorage.
+          example: "10242480"
+          explode: false
+          in: path
+          name: objectStorageId
+          required: true
+          schema:
+            type: string
+          style: simple
+        - description: The user id.
+          explode: false
+          in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+          style: simple
       requestBody:
         content:
           application/json:
@@ -742,7 +748,7 @@ paths:
               example:
                 accessKey: BHGWSRW4OQ7QKIV5YTP0
                 accountId: "58053652363364670478"
-                displayName: '****************ser'
+                displayName: "****************ser"
                 expiresAt: 2026-07-10T13:14:42Z
                 id: SGKH6ZNxutUyt5e-WRxE8XiT2KiSGAkwPP1nJoyXAg==
                 secretAccessKey: WsndsW+WjRz14LP6p33LTpiO6byDhK1xxswCxUvy
@@ -796,7 +802,7 @@ paths:
               example:
                 correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
                 errorCode: "500"
-                errorMessage: '''The API could not handle your request at this time.'
+                errorMessage: "'The API could not handle your request at this time."
               schema:
                 $ref: "#/components/schemas/errorResult"
           description: Internal Server Error.
@@ -811,41 +817,42 @@ paths:
                 $ref: "#/components/schemas/errorResult"
           description: Service Unavailable.
       security:
-      - X-LSW-Auth: []
+        - X-LSW-Auth: []
       summary: Create a user access key
       tags:
-      - objectstorage
+        - objectstorage
   /objectStorages/{objectStorageId}/users/{userId}/accessKeys/{accessKeyId}:
     delete:
-      description: "Delete tenant user access key given ObjectStorage product, user\
+      description:
+        "Delete tenant user access key given ObjectStorage product, user\
         \ and access key id."
       operationId: deleteObjectStorageAccessKey
       parameters:
-      - description: The id of the ObjectStorage.
-        example: "10242480"
-        explode: false
-        in: path
-        name: objectStorageId
-        required: true
-        schema:
-          type: string
-        style: simple
-      - description: The user id.
-        explode: false
-        in: path
-        name: userId
-        required: true
-        schema:
-          type: string
-        style: simple
-      - description: "The access key id, UUID format."
-        explode: false
-        in: path
-        name: accessKeyId
-        required: true
-        schema:
-          type: string
-        style: simple
+        - description: The id of the ObjectStorage.
+          example: "10242480"
+          explode: false
+          in: path
+          name: objectStorageId
+          required: true
+          schema:
+            type: string
+          style: simple
+        - description: The user id.
+          explode: false
+          in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+          style: simple
+        - description: "The access key id, UUID format."
+          explode: false
+          in: path
+          name: accessKeyId
+          required: true
+          schema:
+            type: string
+          style: simple
       responses:
         "204":
           description: No Content.
@@ -885,7 +892,7 @@ paths:
               example:
                 correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
                 errorCode: "500"
-                errorMessage: '''The API could not handle your request at this time.'
+                errorMessage: "'The API could not handle your request at this time."
               schema:
                 $ref: "#/components/schemas/errorResult"
           description: Internal Server Error.
@@ -900,39 +907,40 @@ paths:
                 $ref: "#/components/schemas/errorResult"
           description: Service Unavailable.
       security:
-      - X-LSW-Auth: []
+        - X-LSW-Auth: []
       summary: Delete a user access key
       tags:
-      - objectstorage
+        - objectstorage
   /objectStorages/{objectStorageId}/groups:
     get:
       description: Show tenant groups for the given ObjectStorage product.
       operationId: getObjectStorageGroupList
       parameters:
-      - description: The id of the ObjectStorage.
-        example: "10242480"
-        explode: false
-        in: path
-        name: objectStorageId
-        required: true
-        schema:
-          type: string
-        style: simple
+        - description: The id of the ObjectStorage.
+          example: "10242480"
+          explode: false
+          in: path
+          name: objectStorageId
+          required: true
+          schema:
+            type: string
+          style: simple
       responses:
         "200":
           content:
             application/json:
               example:
                 groups:
-                - id: 9576bc36-84e2-4ed7-92ff-6bb8fa25a2d5
-                  displayName: allPowerful
-                  uniqueName: group/allPowerful
-                  s3Policies: "{\"Statement\": [{\"Effect\": \"Allow\",\"Action\"\
-                    : \"s3:*\",\"Resource\": \"arn:aws:s3:::*\"}]}"
-                - id: 5e479608-e62d-4936-9095-6f3be82b564e
-                  displayName: NoAccess
-                  uniqueName: group/NoAccess
-                  s3Policies: null
+                  - id: 9576bc36-84e2-4ed7-92ff-6bb8fa25a2d5
+                    displayName: allPowerful
+                    uniqueName: group/allPowerful
+                    s3Policies:
+                      "{\"Statement\": [{\"Effect\": \"Allow\",\"Action\"\
+                      : \"s3:*\",\"Resource\": \"arn:aws:s3:::*\"}]}"
+                  - id: 5e479608-e62d-4936-9095-6f3be82b564e
+                    displayName: NoAccess
+                    uniqueName: group/NoAccess
+                    s3Policies: null
               schema:
                 $ref: "#/components/schemas/getObjectStorageGroupListResult"
           description: OK
@@ -972,7 +980,7 @@ paths:
               example:
                 correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
                 errorCode: "500"
-                errorMessage: '''The API could not handle your request at this time.'
+                errorMessage: "'The API could not handle your request at this time."
               schema:
                 $ref: "#/components/schemas/errorResult"
           description: Internal Server Error.
@@ -987,23 +995,23 @@ paths:
                 $ref: "#/components/schemas/errorResult"
           description: Service Unavailable.
       security:
-      - X-LSW-Auth: []
+        - X-LSW-Auth: []
       summary: List object storage groups
       tags:
-      - objectstorage
+        - objectstorage
     post:
       description: Create tenant group for the given ObjectStorage product.
       operationId: createObjectStorageGroup
       parameters:
-      - description: The id of the ObjectStorage.
-        example: "10242480"
-        explode: false
-        in: path
-        name: objectStorageId
-        required: true
-        schema:
-          type: string
-        style: simple
+        - description: The id of the ObjectStorage.
+          example: "10242480"
+          explode: false
+          in: path
+          name: objectStorageId
+          required: true
+          schema:
+            type: string
+          style: simple
       requestBody:
         content:
           application/json:
@@ -1020,7 +1028,8 @@ paths:
               example:
                 displayName: allPowerful
                 id: 3f8fad42-73c1-4b5a-9d23-8e1f2c47b890
-                s3Policies: "{\"Statement\": [{\"Effect\": \"Deny\",\"Action\": \"\
+                s3Policies:
+                  "{\"Statement\": [{\"Effect\": \"Deny\",\"Action\": \"\
                   s3:*\",\"Resource\": \"arn:aws:s3:::*\"}]}"
                 uniqueName: group/allPowerful
               schema:
@@ -1073,7 +1082,7 @@ paths:
               example:
                 correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
                 errorCode: "500"
-                errorMessage: '''The API could not handle your request at this time.'
+                errorMessage: "'The API could not handle your request at this time."
               schema:
                 $ref: "#/components/schemas/errorResult"
           description: Internal Server Error.
@@ -1088,32 +1097,32 @@ paths:
                 $ref: "#/components/schemas/errorResult"
           description: Service Unavailable.
       security:
-      - X-LSW-Auth: []
+        - X-LSW-Auth: []
       summary: Create an object storage group
       tags:
-      - objectstorage
+        - objectstorage
   /objectStorages/{objectStorageId}/groups/{groupId}:
     delete:
       description: Delete tenant group of the given ObjectStorage product and group.
       operationId: deleteObjectStorageGroup
       parameters:
-      - description: The id of the ObjectStorage.
-        example: "10242480"
-        explode: false
-        in: path
-        name: objectStorageId
-        required: true
-        schema:
-          type: string
-        style: simple
-      - description: The group id.
-        explode: false
-        in: path
-        name: groupId
-        required: true
-        schema:
-          type: string
-        style: simple
+        - description: The id of the ObjectStorage.
+          example: "10242480"
+          explode: false
+          in: path
+          name: objectStorageId
+          required: true
+          schema:
+            type: string
+          style: simple
+        - description: The group id.
+          explode: false
+          in: path
+          name: groupId
+          required: true
+          schema:
+            type: string
+          style: simple
       responses:
         "204":
           description: No Content.
@@ -1153,7 +1162,7 @@ paths:
               example:
                 correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
                 errorCode: "500"
-                errorMessage: '''The API could not handle your request at this time.'
+                errorMessage: "'The API could not handle your request at this time."
               schema:
                 $ref: "#/components/schemas/errorResult"
           description: Internal Server Error.
@@ -1168,32 +1177,33 @@ paths:
                 $ref: "#/components/schemas/errorResult"
           description: Service Unavailable.
       security:
-      - X-LSW-Auth: []
+        - X-LSW-Auth: []
       summary: Delete an object storage group
       tags:
-      - objectstorage
+        - objectstorage
     get:
-      description: Show tenant group for the given ObjectStorage product and group
+      description:
+        Show tenant group for the given ObjectStorage product and group
         id.
       operationId: getObjectStorageGroup
       parameters:
-      - description: The id of the ObjectStorage.
-        example: "10242480"
-        explode: false
-        in: path
-        name: objectStorageId
-        required: true
-        schema:
-          type: string
-        style: simple
-      - description: The group id.
-        explode: false
-        in: path
-        name: groupId
-        required: true
-        schema:
-          type: string
-        style: simple
+        - description: The id of the ObjectStorage.
+          example: "10242480"
+          explode: false
+          in: path
+          name: objectStorageId
+          required: true
+          schema:
+            type: string
+          style: simple
+        - description: The group id.
+          explode: false
+          in: path
+          name: groupId
+          required: true
+          schema:
+            type: string
+          style: simple
       responses:
         "200":
           content:
@@ -1201,7 +1211,8 @@ paths:
               example:
                 displayName: allPowerful
                 id: 3f8fad42-73c1-4b5a-9d23-8e1f2c47b890
-                s3Policies: "{\"Statement\": [{\"Effect\": \"Deny\",\"Action\": \"\
+                s3Policies:
+                  "{\"Statement\": [{\"Effect\": \"Deny\",\"Action\": \"\
                   s3:*\",\"Resource\": \"arn:aws:s3:::*\"}]}"
                 uniqueName: group/allPowerful
               schema:
@@ -1243,7 +1254,7 @@ paths:
               example:
                 correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
                 errorCode: "500"
-                errorMessage: '''The API could not handle your request at this time.'
+                errorMessage: "'The API could not handle your request at this time."
               schema:
                 $ref: "#/components/schemas/errorResult"
           description: Internal Server Error.
@@ -1258,38 +1269,40 @@ paths:
                 $ref: "#/components/schemas/errorResult"
           description: Service Unavailable.
       security:
-      - X-LSW-Auth: []
+        - X-LSW-Auth: []
       summary: Get an object storage group
       tags:
-      - objectstorage
+        - objectstorage
     put:
-      description: Update tenant group for the given ObjectStorage product and group
+      description:
+        Update tenant group for the given ObjectStorage product and group
         id.
       operationId: updateObjectStorageGroup
       parameters:
-      - description: The id of the ObjectStorage.
-        example: "10242480"
-        explode: false
-        in: path
-        name: objectStorageId
-        required: true
-        schema:
-          type: string
-        style: simple
-      - description: The group id.
-        explode: false
-        in: path
-        name: groupId
-        required: true
-        schema:
-          type: string
-        style: simple
+        - description: The id of the ObjectStorage.
+          example: "10242480"
+          explode: false
+          in: path
+          name: objectStorageId
+          required: true
+          schema:
+            type: string
+          style: simple
+        - description: The group id.
+          explode: false
+          in: path
+          name: groupId
+          required: true
+          schema:
+            type: string
+          style: simple
       requestBody:
         content:
           application/json:
             example:
               displayName: testGroup
-              s3Policies: "{\"Statement\": [{\"Effect\": \"Deny\",\"Action\": \"s3:*\"\
+              s3Policies:
+                "{\"Statement\": [{\"Effect\": \"Deny\",\"Action\": \"s3:*\"\
                 ,\"Resource\": \"arn:aws:s3:::*\"}]}"
             schema:
               $ref: "#/components/schemas/updateObjectStorageGroupOpts"
@@ -1300,7 +1313,8 @@ paths:
               example:
                 displayName: allPowerful
                 id: 3f8fad42-73c1-4b5a-9d23-8e1f2c47b890
-                s3Policies: "{\"Statement\": [{\"Effect\": \"Deny\",\"Action\": \"\
+                s3Policies:
+                  "{\"Statement\": [{\"Effect\": \"Deny\",\"Action\": \"\
                   s3:*\",\"Resource\": \"arn:aws:s3:::*\"}]}"
                 uniqueName: group/allPowerful
               schema:
@@ -1353,7 +1367,7 @@ paths:
               example:
                 correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
                 errorCode: "500"
-                errorMessage: '''The API could not handle your request at this time.'
+                errorMessage: "'The API could not handle your request at this time."
               schema:
                 $ref: "#/components/schemas/errorResult"
           description: Internal Server Error.
@@ -1368,76 +1382,76 @@ paths:
                 $ref: "#/components/schemas/errorResult"
           description: Service Unavailable.
       security:
-      - X-LSW-Auth: []
+        - X-LSW-Auth: []
       summary: Update an object storage group
       tags:
-      - objectstorage
+        - objectstorage
   /objectStorages/{objectStorageId}/buckets:
     get:
       description: Show tenant buckets for the given ObjectStorage product.
       operationId: getObjectStorageBucketList
       parameters:
-      - description: The id of the ObjectStorage.
-        example: "10242480"
-        explode: false
-        in: path
-        name: objectStorageId
-        required: true
-        schema:
-          type: string
-        style: simple
+        - description: The id of the ObjectStorage.
+          example: "10242480"
+          explode: false
+          in: path
+          name: objectStorageId
+          required: true
+          schema:
+            type: string
+          style: simple
       responses:
         "200":
           content:
             application/json:
               example:
                 buckets:
-                - name: test-bucket-01
-                  region: nl-01
-                  isVersioningEnabled: true
-                  quota:
-                    value: 1000
-                    unit: GB
-                  objectCount: 0
-                  used:
-                    value: 0
-                    unit: GB
-                  creationTime: null
-                  isBeingDeleted: false
-                - name: abcdef
-                  region: nl-01
-                  isVersioningEnabled: true
-                  quota:
-                    value: 1000000000
-                    unit: GB
-                  objectCount: 1000
-                  used:
-                    value: 500000000
-                    unit: GB
-                  creationTime: 2024-01-15T08:30:00Z
-                  isBeingDeleted: false
-                - name: emmer-public
-                  region: nl-01
-                  isVersioningEnabled: false
-                  quota: null
-                  objectCount: 0
-                  used:
-                    value: 0
-                    unit: GB
-                  creationTime: 2024-02-20T10:00:00Z
-                  isBeingDeleted: false
-                - name: emmer1
-                  region: nl-01
-                  isVersioningEnabled: true
-                  quota:
-                    value: 2000000000
-                    unit: GB
-                  objectCount: 2000
-                  used:
-                    value: 1000000000
-                    unit: GB
-                  creationTime: 2024-03-10T14:15:00Z
-                  isBeingDeleted: false
+                  - name: test-bucket-01
+                    region: nl-01
+                    isVersioningEnabled: true
+                    quota:
+                      value: 1000
+                      unit: GB
+                    objectCount: 0
+                    used:
+                      value: 0
+                      unit: GB
+                    creationTime: null
+                    isBeingDeleted: false
+                  - name: abcdef
+                    region: nl-01
+                    isVersioningEnabled: true
+                    quota:
+                      value: 1000000000
+                      unit: GB
+                    objectCount: 1000
+                    used:
+                      value: 500000000
+                      unit: GB
+                    creationTime: 2024-01-15T08:30:00Z
+                    isBeingDeleted: false
+                  - name: emmer-public
+                    region: nl-01
+                    isVersioningEnabled: false
+                    quota: null
+                    objectCount: 0
+                    used:
+                      value: 0
+                      unit: GB
+                    creationTime: 2024-02-20T10:00:00Z
+                    isBeingDeleted: false
+                  - name: emmer1
+                    region: nl-01
+                    isVersioningEnabled: true
+                    quota:
+                      value: 2000000000
+                      unit: GB
+                    objectCount: 2000
+                    used:
+                      value: 1000000000
+                      unit: GB
+                    creationTime: 2024-03-10T14:15:00Z
+                    isBeingDeleted: false
               schema:
                 $ref: "#/components/schemas/getObjectStorageBucketListResult"
           description: OK
@@ -1477,7 +1491,7 @@ paths:
               example:
                 correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
                 errorCode: "500"
-                errorMessage: '''The API could not handle your request at this time.'
+                errorMessage: "'The API could not handle your request at this time."
               schema:
                 $ref: "#/components/schemas/errorResult"
           description: Internal Server Error.
@@ -1492,23 +1506,23 @@ paths:
                 $ref: "#/components/schemas/errorResult"
           description: Service Unavailable.
       security:
-      - X-LSW-Auth: []
+        - X-LSW-Auth: []
       summary: List object storage buckets
       tags:
-      - objectstorage
+        - objectstorage
     post:
       description: Create tenant bucket for the given ObjectStorage product.
       operationId: createObjectStorageBucket
       parameters:
-      - description: The id of the ObjectStorage.
-        example: "10242480"
-        explode: false
-        in: path
-        name: objectStorageId
-        required: true
-        schema:
-          type: string
-        style: simple
+        - description: The id of the ObjectStorage.
+          example: "10242480"
+          explode: false
+          in: path
+          name: objectStorageId
+          required: true
+          schema:
+            type: string
+          style: simple
       requestBody:
         content:
           application/json:
@@ -1585,7 +1599,7 @@ paths:
               example:
                 correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
                 errorCode: "500"
-                errorMessage: '''The API could not handle your request at this time.'
+                errorMessage: "'The API could not handle your request at this time."
               schema:
                 $ref: "#/components/schemas/errorResult"
           description: Internal Server Error.
@@ -1600,32 +1614,32 @@ paths:
                 $ref: "#/components/schemas/errorResult"
           description: Service Unavailable.
       security:
-      - X-LSW-Auth: []
+        - X-LSW-Auth: []
       summary: Create an object storage bucket
       tags:
-      - objectstorage
+        - objectstorage
   /objectStorages/{objectStorageId}/buckets/{bucketName}:
     delete:
       description: Delete tenant bucket of the given ObjectStorage product and bucket.
       operationId: deleteObjectStorageBucket
       parameters:
-      - description: The id of the ObjectStorage.
-        example: "10242480"
-        explode: false
-        in: path
-        name: objectStorageId
-        required: true
-        schema:
-          type: string
-        style: simple
-      - description: The bucket name.
-        explode: false
-        in: path
-        name: bucketName
-        required: true
-        schema:
-          type: string
-        style: simple
+        - description: The id of the ObjectStorage.
+          example: "10242480"
+          explode: false
+          in: path
+          name: objectStorageId
+          required: true
+          schema:
+            type: string
+          style: simple
+        - description: The bucket name.
+          explode: false
+          in: path
+          name: bucketName
+          required: true
+          schema:
+            type: string
+          style: simple
       responses:
         "204":
           description: No Content.
@@ -1665,7 +1679,7 @@ paths:
               example:
                 correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
                 errorCode: "500"
-                errorMessage: '''The API could not handle your request at this time.'
+                errorMessage: "'The API could not handle your request at this time."
               schema:
                 $ref: "#/components/schemas/errorResult"
           description: Internal Server Error.
@@ -1680,32 +1694,33 @@ paths:
                 $ref: "#/components/schemas/errorResult"
           description: Service Unavailable.
       security:
-      - X-LSW-Auth: []
+        - X-LSW-Auth: []
       summary: Delete an object storage bucket
       tags:
-      - objectstorage
+        - objectstorage
     put:
-      description: Update tenant bucket for the given ObjectStorage product and bucket
+      description:
+        Update tenant bucket for the given ObjectStorage product and bucket
         name.
       operationId: updateObjectStorageBucket
       parameters:
-      - description: The id of the ObjectStorage.
-        example: "10242480"
-        explode: false
-        in: path
-        name: objectStorageId
-        required: true
-        schema:
-          type: string
-        style: simple
-      - description: The bucket name.
-        explode: false
-        in: path
-        name: bucketName
-        required: true
-        schema:
-          type: string
-        style: simple
+        - description: The id of the ObjectStorage.
+          example: "10242480"
+          explode: false
+          in: path
+          name: objectStorageId
+          required: true
+          schema:
+            type: string
+          style: simple
+        - description: The bucket name.
+          explode: false
+          in: path
+          name: bucketName
+          required: true
+          schema:
+            type: string
+          style: simple
       requestBody:
         content:
           application/json:
@@ -1781,7 +1796,7 @@ paths:
               example:
                 correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
                 errorCode: "500"
-                errorMessage: '''The API could not handle your request at this time.'
+                errorMessage: "'The API could not handle your request at this time."
               schema:
                 $ref: "#/components/schemas/errorResult"
           description: Internal Server Error.
@@ -1796,10 +1811,10 @@ paths:
                 $ref: "#/components/schemas/errorResult"
           description: Service Unavailable.
       security:
-      - X-LSW-Auth: []
+        - X-LSW-Auth: []
       summary: Update an object storage bucket
       tags:
-      - objectstorage
+        - objectstorage
 components:
   parameters:
     limit:
@@ -1918,7 +1933,7 @@ components:
           example:
             correlationId: 289346a1-3eaf-4da4-b707-62ef12eb08be
             errorCode: "500"
-            errorMessage: '''The API could not handle your request at this time.'
+            errorMessage: "'The API could not handle your request at this time."
           schema:
             $ref: "#/components/schemas/errorResult"
       description: Internal Server Error.
@@ -1936,20 +1951,20 @@ components:
     getObjectStorageListResult:
       example:
         objectStorages:
-        - quantity: quantity
-          regionUrl: https://openapi-generator.tech
-          customerId: customerId
-          contractId: contractId
-          description: description
-          id: id
-          salesOrgId: salesOrgId
-        - quantity: quantity
-          regionUrl: https://openapi-generator.tech
-          customerId: customerId
-          contractId: contractId
-          description: description
-          id: id
-          salesOrgId: salesOrgId
+          - quantity: quantity
+            regionUrl: https://openapi-generator.tech
+            customerId: customerId
+            contractId: contractId
+            description: description
+            id: id
+            salesOrgId: salesOrgId
+          - quantity: quantity
+            regionUrl: https://openapi-generator.tech
+            customerId: customerId
+            contractId: contractId
+            description: description
+            id: id
+            salesOrgId: salesOrgId
         _metadata:
           offset: 6
           limit: 0
@@ -1971,8 +1986,8 @@ components:
         correlationId: correlationId
         errorDetails:
           key:
-          - errorDetails
-          - errorDetails
+            - errorDetails
+            - errorDetails
       properties:
         correlationId:
           description: The correlation ID of the current request.
@@ -1997,8 +2012,8 @@ components:
         uniqueName: uniqueName
         fullName: fullName
         groups:
-        - groups
-        - groups
+          - groups
+          - groups
         id: id
       properties:
         id:
@@ -2020,18 +2035,18 @@ components:
     getObjectStorageUserListResult:
       example:
         users:
-        - uniqueName: uniqueName
-          fullName: fullName
-          groups:
-          - groups
-          - groups
-          id: id
-        - uniqueName: uniqueName
-          fullName: fullName
-          groups:
-          - groups
-          - groups
-          id: id
+          - uniqueName: uniqueName
+            fullName: fullName
+            groups:
+              - groups
+              - groups
+            id: id
+          - uniqueName: uniqueName
+            fullName: fullName
+            groups:
+              - groups
+              - groups
+            id: id
       properties:
         users:
           description: A list of tenant users.
@@ -2059,9 +2074,9 @@ components:
             type: string
           type: array
       required:
-      - fullName
-      - groups
-      - uniqueName
+        - fullName
+        - groups
+        - uniqueName
       title: createObjectStorageUserOpts
       type: object
     updateObjectStorageUserOpts:
@@ -2078,8 +2093,8 @@ components:
             type: string
           type: array
       required:
-      - fullName
-      - groups
+        - fullName
+        - groups
       title: updateObjectStorageUserOpts
       type: object
     accessKey:
@@ -2100,7 +2115,8 @@ components:
           description: The account identifier this key belongs to.
           type: string
         expiresAt:
-          description: "The datetime string of the key expire date if it has been\
+          description:
+            "The datetime string of the key expire date if it has been\
             \ set, null otherwise."
           format: date-time
           nullable: true
@@ -2110,14 +2126,14 @@ components:
     getObjectStorageAccessKeyListResult:
       example:
         keys:
-        - accountId: accountId
-          displayName: displayName
-          id: id
-          expiresAt: 2000-01-23T04:56:07.000+00:00
-        - accountId: accountId
-          displayName: displayName
-          id: id
-          expiresAt: 2000-01-23T04:56:07.000+00:00
+          - accountId: accountId
+            displayName: displayName
+            id: id
+            expiresAt: 2000-01-23T04:56:07.000+00:00
+          - accountId: accountId
+            displayName: displayName
+            id: id
+            expiresAt: 2000-01-23T04:56:07.000+00:00
       properties:
         keys:
           description: A list of access keys.
@@ -2129,7 +2145,8 @@ components:
     createObjectStorageAccessKeyOpts:
       properties:
         expiresAt:
-          description: The expire date for the access key in ISO 8601 datetime format.
+          description:
+            The expire date for the access key in ISO 8601 datetime format.
             Can be null.
           format: date-time
           nullable: true
@@ -2155,7 +2172,8 @@ components:
           description: The account identifier this key belongs to.
           type: string
         expiresAt:
-          description: "The datetime string of the key expire date if it has been\
+          description:
+            "The datetime string of the key expire date if it has been\
             \ set, null otherwise."
           format: date-time
           nullable: true
@@ -2186,7 +2204,8 @@ components:
           description: The group unique name.
           type: string
         s3Policies:
-          description: "A JSON-encoded IAM-style policy document (e.g. `{\"Statement\"\
+          description:
+            "A JSON-encoded IAM-style policy document (e.g. `{\"Statement\"\
             :[{\"Effect\":\"Allow\",\"Action\":\"s3:*\",\"Resource\":\"arn:aws:s3:::*\"\
             }]}`), or null if no policy is set."
           nullable: true
@@ -2196,14 +2215,14 @@ components:
     getObjectStorageGroupListResult:
       example:
         groups:
-        - uniqueName: uniqueName
-          s3Policies: s3Policies
-          displayName: displayName
-          id: id
-        - uniqueName: uniqueName
-          s3Policies: s3Policies
-          displayName: displayName
-          id: id
+          - uniqueName: uniqueName
+            s3Policies: s3Policies
+            displayName: displayName
+            id: id
+          - uniqueName: uniqueName
+            s3Policies: s3Policies
+            displayName: displayName
+            id: id
       properties:
         groups:
           description: A list of tenant groups.
@@ -2225,13 +2244,14 @@ components:
           minLength: 1
           type: string
         s3Policies:
-          description: Optional JSON string defining the S3 policies and permissions
+          description:
+            Optional JSON string defining the S3 policies and permissions
             for users in this group.
           nullable: true
           type: string
       required:
-      - displayName
-      - uniqueName
+        - displayName
+        - uniqueName
       title: createObjectStorageGroupOpts
       type: object
     updateObjectStorageGroupOpts:
@@ -2242,12 +2262,13 @@ components:
           minLength: 1
           type: string
         s3Policies:
-          description: Optional JSON string defining the S3 policies and permissions
+          description:
+            Optional JSON string defining the S3 policies and permissions
             for users in this group.
           nullable: true
           type: string
       required:
-      - displayName
+        - displayName
       title: updateObjectStorageGroupOpts
       type: object
     bucket:
@@ -2284,7 +2305,8 @@ components:
         used:
           $ref: "#/components/schemas/bucketUsedSpace"
         creationTime:
-          description: "The date and time the bucket was created, or null if not yet\
+          description:
+            "The date and time the bucket was created, or null if not yet\
             \ available."
           format: date-time
           nullable: true
@@ -2297,30 +2319,30 @@ components:
     getObjectStorageBucketListResult:
       example:
         buckets:
-        - objectCount: 6
-          creationTime: 2000-01-23T04:56:07.000+00:00
-          quota:
-            unit: GB
-            value: 0.8008281904610115
-          name: name
-          isBeingDeleted: true
-          used:
-            unit: GB
-            value: 1.4658129805029452
-          region: region
-          isVersioningEnabled: true
-        - objectCount: 6
-          creationTime: 2000-01-23T04:56:07.000+00:00
-          quota:
-            unit: GB
-            value: 0.8008281904610115
-          name: name
-          isBeingDeleted: true
-          used:
-            unit: GB
-            value: 1.4658129805029452
-          region: region
-          isVersioningEnabled: true
+          - objectCount: 6
+            creationTime: 2000-01-23T04:56:07.000+00:00
+            quota:
+              unit: GB
+              value: 0.8008281904610115
+            name: name
+            isBeingDeleted: true
+            used:
+              unit: GB
+              value: 1.4658129805029452
+            region: region
+            isVersioningEnabled: true
+          - objectCount: 6
+            creationTime: 2000-01-23T04:56:07.000+00:00
+            quota:
+              unit: GB
+              value: 0.8008281904610115
+            name: name
+            isBeingDeleted: true
+            used:
+              unit: GB
+              value: 1.4658129805029452
+            region: region
+            isVersioningEnabled: true
       properties:
         buckets:
           description: A list of tenant buckets.
@@ -2332,7 +2354,8 @@ components:
     createObjectStorageBucketOpts:
       properties:
         name:
-          description: "The bucket name. Must be 3–63 characters, alphanumeric and\
+          description:
+            "The bucket name. Must be 3–63 characters, alphanumeric and\
             \ hyphens only."
           maxLength: 63
           minLength: 3
@@ -2342,7 +2365,8 @@ components:
           description: Indicates if versioning is enabled for the bucket.
           type: boolean
         quota:
-          description: "The quota for the size of the bucket in GB (1–1,000,000).\
+          description:
+            "The quota for the size of the bucket in GB (1–1,000,000).\
             \ Omit or set to null for no quota. In responses, quota is returned as\
             \ an object with `value` and `unit` fields."
           maximum: 1000000
@@ -2350,8 +2374,8 @@ components:
           nullable: true
           type: integer
       required:
-      - isVersioningEnabled
-      - name
+        - isVersioningEnabled
+        - name
       title: createObjectStorageBucketOpts
       type: object
     updateObjectStorageBucketOpts:
@@ -2366,7 +2390,7 @@ components:
           nullable: true
           type: integer
       required:
-      - isVersioningEnabled
+        - isVersioningEnabled
       title: updateObjectStorageBucketOpts
       type: object
     objectStorageListItem:
@@ -2431,7 +2455,7 @@ components:
         unit:
           description: "The unit of the quota, e.g., GB."
           enum:
-          - GB
+            - GB
           type: string
       title: bucketQuota
       type: object
@@ -2447,7 +2471,7 @@ components:
         unit:
           description: "The unit of the used space, e.g., GB."
           enum:
-          - GB
+            - GB
           type: string
       title: bucketUsedSpace
       type: object
