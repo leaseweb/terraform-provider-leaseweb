@@ -20,6 +20,11 @@ route /ipMgmt/v2/* {
 	reverse_proxy prism_ipmgmt:4010
 }
 
+route /objectStorage/v1/* {
+	uri strip_prefix /objectStorage/v1
+	reverse_proxy prism_objectstorage:4010
+}
+
 log {
     format console
 }

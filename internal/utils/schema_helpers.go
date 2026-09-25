@@ -35,7 +35,7 @@ func (a Action) string(unsupportedActions []Action) string {
 	case DeleteAction:
 		secondAction = "deleted"
 	default:
-		log.Fatal(fmt.Printf("do not know how to handle action: %q", a))
+		log.Fatalf("do not know how to handle action: %d", a)
 	}
 
 	firstAction := a.firstAction(unsupportedActions)

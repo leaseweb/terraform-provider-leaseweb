@@ -4599,3 +4599,349 @@ func TestAccIpmgmtNullRouteResource(t *testing.T) {
 		})
 	})
 }
+
+func TestAccObjectStorageObjectStoragesDataSource(t *testing.T) {
+	t.Run("lists all object storages", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: providerConfig + `data "leaseweb_object_storages" "test" {}`,
+					Check: resource.ComposeAggregateTestCheckFunc(
+						resource.TestCheckResourceAttr(
+							"data.leaseweb_object_storages.test",
+							"object_storages.#",
+							"2",
+						),
+						resource.TestCheckResourceAttr(
+							"data.leaseweb_object_storages.test",
+							"object_storages.0.id",
+							"12316650",
+						),
+						resource.TestCheckResourceAttr(
+							"data.leaseweb_object_storages.test",
+							"object_storages.0.customer_id",
+							"10085996",
+						),
+						resource.TestCheckResourceAttr(
+							"data.leaseweb_object_storages.test",
+							"object_storages.0.contract_id",
+							"42001021000100",
+						),
+						resource.TestCheckResourceAttr(
+							"data.leaseweb_object_storages.test",
+							"object_storages.0.sales_org_id",
+							"2000",
+						),
+						resource.TestCheckResourceAttr(
+							"data.leaseweb_object_storages.test",
+							"object_storages.0.quantity",
+							"100GB",
+						),
+						resource.TestCheckResourceAttr(
+							"data.leaseweb_object_storages.test",
+							"object_storages.0.region_url",
+							"https://nl.object-storage.io",
+						),
+					),
+				},
+			},
+		})
+	})
+}
+
+func TestAccObjectStorageBucketResource(t *testing.T) {
+	t.Run("creates and updates a bucket", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				// Create and Read testing
+				{
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_bucket" "test" {
+					  object_storage_id     = "12316650"
+					  name                  = "test-bucket-01"
+					  is_versioning_enabled = true
+					  quota                 = 1000
+					}
+					`,
+					Check: resource.ComposeAggregateTestCheckFunc(
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_bucket.test",
+							"id",
+							"test-bucket-01",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_bucket.test",
+							"region",
+							"nl-01",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_bucket.test",
+							"quota",
+							"1000",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_bucket.test",
+							"object_count",
+							"0",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_bucket.test",
+							"used.unit",
+							"GB",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_bucket.test",
+							"used.value",
+							"0",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_bucket.test",
+							"is_being_deleted",
+							"false",
+						),
+					),
+				},
+				// ImportState testing
+				{
+					ResourceName:      "leaseweb_object_storage_bucket.test",
+					ImportState:       true,
+					ImportStateVerify: true,
+					ImportStateId:     "12316650,test-bucket-01",
+				},
+			},
+
+			// Delete testing automatically occurs in TestCase
+		})
+	})
+
+	t.Run("invalid name throws an error", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_bucket" "test" {
+					  object_storage_id     = "12316650"
+					  name                  = "-invalid-"
+					  is_versioning_enabled = true
+					}
+					`,
+					ExpectError: regexp.MustCompile(
+						"must start and end with an alphanumeric character",
+					),
+				},
+			},
+		})
+	})
+
+	t.Run("quota outside the allowed range throws an error", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_bucket" "test" {
+					  object_storage_id     = "12316650"
+					  name                  = "test-bucket-01"
+					  is_versioning_enabled = true
+					  quota                 = 0
+					}
+					`,
+					ExpectError: regexp.MustCompile(
+						"Attribute quota value must be between 1 and 1000000",
+					),
+				},
+			},
+		})
+	})
+}
+
+func TestAccObjectStorageGroupResource(t *testing.T) {
+	t.Run("creates and updates a group", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				// Create and Read testing
+				{
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_group" "test" {
+					  object_storage_id = "12316650"
+					  display_name      = "allPowerful"
+					  unique_name       = "group/allPowerful"
+					  s3_policies = jsonencode({
+					    Statement = [{ Effect = "Deny", Action = "s3:*", Resource = "arn:aws:s3:::*" }]
+					  })
+					}
+					`,
+					Check: resource.ComposeAggregateTestCheckFunc(
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_group.test",
+							"id",
+							"3f8fad42-73c1-4b5a-9d23-8e1f2c47b890",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_group.test",
+							"display_name",
+							"allPowerful",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_group.test",
+							"unique_name",
+							"group/allPowerful",
+						),
+					),
+				},
+				// ImportState testing. s3_policies is a semantically compared JSON
+				// string, but ImportStateVerify compares attributes literally, so an
+				// imported group holds the formatting the API returned rather than
+				// the formatting jsonencode produced.
+				{
+					ResourceName:            "leaseweb_object_storage_group.test",
+					ImportState:             true,
+					ImportStateVerify:       true,
+					ImportStateId:           "12316650,3f8fad42-73c1-4b5a-9d23-8e1f2c47b890",
+					ImportStateVerifyIgnore: []string{"s3_policies"},
+				},
+			},
+
+			// Delete testing automatically occurs in TestCase
+		})
+	})
+}
+
+func TestAccObjectStorageUserResource(t *testing.T) {
+	t.Run("creates and updates a user", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				// Create and Read testing
+				{
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_user" "test" {
+					  object_storage_id = "12316650"
+					  full_name         = "testUser"
+					  unique_name       = "user/testUser"
+					  groups            = ["5e479608-e62d-4936-9095-6f3be82b564e"]
+					}
+					`,
+					Check: resource.ComposeAggregateTestCheckFunc(
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_user.test",
+							"id",
+							"c7e4a1f2-8b3d-4e9c-a5f7-2d6b9e0c1a83",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_user.test",
+							"full_name",
+							"testUser",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_user.test",
+							"unique_name",
+							"user/testUser",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_user.test",
+							"groups.#",
+							"1",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_user.test",
+							"groups.0",
+							"5e479608-e62d-4936-9095-6f3be82b564e",
+						),
+					),
+				},
+				// ImportState testing
+				{
+					ResourceName:      "leaseweb_object_storage_user.test",
+					ImportState:       true,
+					ImportStateVerify: true,
+					ImportStateId:     "12316650,c7e4a1f2-8b3d-4e9c-a5f7-2d6b9e0c1a83",
+				},
+			},
+
+			// Delete testing automatically occurs in TestCase
+		})
+	})
+}
+
+func TestAccObjectStorageAccessKeyResource(t *testing.T) {
+	t.Run("creates an access key", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				// Create and Read testing
+				{
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_access_key" "test" {
+					  object_storage_id = "12316650"
+					  user_id           = "c7e4a1f2-8b3d-4e9c-a5f7-2d6b9e0c1a83"
+					  expires_at        = "2026-07-10T13:14:42Z"
+					}
+					`,
+					Check: resource.ComposeAggregateTestCheckFunc(
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_access_key.test",
+							"id",
+							"SGKH6ZNxutUyt5e-WRxE8XiT2KiSGAkwPP1nJoyXAg==",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_access_key.test",
+							"account_id",
+							"58053652363364670478",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_access_key.test",
+							"access_key",
+							"BHGWSRW4OQ7QKIV5YTP0",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_access_key.test",
+							"secret_access_key",
+							"WsndsW+WjRz14LP6p33LTpiO6byDhK1xxswCxUvy",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_access_key.test",
+							"expires_at",
+							"2026-07-10T13:14:42Z",
+						),
+					),
+				},
+				// ImportState testing. access_key & secret_access_key are only
+				// returned on creation, so an imported key cannot have them.
+				{
+					ResourceName:            "leaseweb_object_storage_access_key.test",
+					ImportState:             true,
+					ImportStateVerify:       true,
+					ImportStateId:           "12316650,c7e4a1f2-8b3d-4e9c-a5f7-2d6b9e0c1a83,SGKH6ZNxutUyt5e-WRxE8XiT2KiSGAkwPP1nJoyXAg==",
+					ImportStateVerifyIgnore: []string{"access_key", "secret_access_key"},
+				},
+			},
+
+			// Delete testing automatically occurs in TestCase
+		})
+	})
+
+	t.Run("invalid expires_at throws an error", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_access_key" "test" {
+					  object_storage_id = "12316650"
+					  user_id           = "c7e4a1f2-8b3d-4e9c-a5f7-2d6b9e0c1a83"
+					  expires_at        = "tralala"
+					}
+					`,
+					ExpectError: regexp.MustCompile(
+						"Attribute expires_at must be specified using the RFC3339 format",
+					),
+				},
+			},
+		})
+	})
+}

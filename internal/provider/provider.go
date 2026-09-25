@@ -15,6 +15,7 @@ import (
 	"github.com/leaseweb/terraform-provider-leaseweb/internal/provider/dedicatedserver"
 	"github.com/leaseweb/terraform-provider-leaseweb/internal/provider/dns"
 	"github.com/leaseweb/terraform-provider-leaseweb/internal/provider/ipmgmt"
+	"github.com/leaseweb/terraform-provider-leaseweb/internal/provider/objectstorage"
 	"github.com/leaseweb/terraform-provider-leaseweb/internal/provider/publiccloud"
 )
 
@@ -173,6 +174,7 @@ func (p *leasewebProvider) DataSources(_ context.Context) []func() datasource.Da
 		dns.NewResourceRecordSetsDataSource,
 		ipmgmt.NewIPsDataSource,
 		ipmgmt.NewNullRouteHistoryDataSource,
+		objectstorage.NewObjectStoragesDataSource,
 	}
 }
 
@@ -194,5 +196,9 @@ func (p *leasewebProvider) Resources(_ context.Context) []func() resource.Resour
 		dns.NewResourceRecordSetsResource,
 		ipmgmt.NewIPResource,
 		ipmgmt.NewNullRouteResource,
+		objectstorage.NewBucketResource,
+		objectstorage.NewGroupResource,
+		objectstorage.NewUserResource,
+		objectstorage.NewAccessKeyResource,
 	}
 }
