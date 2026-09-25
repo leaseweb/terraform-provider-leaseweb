@@ -4,7 +4,7 @@ services:
     build:
       dockerfile: prism/Dockerfile
     command: >
-      mock -p 4010 --host 0.0.0.0
+      mock -p 4010 --host 0.0.0.0 --multiprocess=false
       ${PUBLIC_CLOUD_API_SPEC_URL}
     env_file:
       - path: .env
@@ -15,7 +15,7 @@ services:
     build:
       dockerfile: prism/Dockerfile
     command: >
-      mock -p 4010 --host 0.0.0.0
+      mock -p 4010 --host 0.0.0.0 --multiprocess=false
       ${DEDICATED_SERVER_API_SPEC_URL}
     env_file:
       - path: .env
@@ -26,7 +26,7 @@ services:
     build:
       dockerfile: prism/Dockerfile
     command: >
-      mock -p 4010 --host 0.0.0.0
+      mock -p 4010 --host 0.0.0.0 --multiprocess=false
       ${DNS_API_SPEC_URL}
     env_file:
       - path: .env
@@ -37,7 +37,7 @@ services:
     build:
       dockerfile: prism/Dockerfile
     command: >
-      mock -p 4010 --host 0.0.0.0
+      mock -p 4010 --host 0.0.0.0 --multiprocess=false
       ${IPMGMT_API_SPEC_URL}
     env_file:
       - path: .env
