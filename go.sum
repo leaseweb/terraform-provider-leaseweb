@@ -122,6 +122,8 @@ github.com/leaseweb/leaseweb-go-sdk/dns v1.3.0 h1:akj/mIr0L0PUDQ2xxPEzcWqdNztcOB
 github.com/leaseweb/leaseweb-go-sdk/dns v1.3.0/go.mod h1:ntxqh2fT7XDwjPLNsWtq6tTjwjL/75llxnbzEZvvzIo=
 github.com/leaseweb/leaseweb-go-sdk/ipmgmt v1.0.0 h1:R+ZC7t3vtAoeRxSH3KcsR8vNF5NgaXy606vobn++cdU=
 github.com/leaseweb/leaseweb-go-sdk/ipmgmt v1.0.0/go.mod h1:TeCaVUQAQU2MeaJVJMMGAnuq9r6VKQF3kurB4dfN9HY=
+github.com/leaseweb/leaseweb-go-sdk/objectstorage v0.0.1 h1:3zFgHjYFoT6AYRBzVUxzos5Blb5YNXJXFTNrYxrpB44=
+github.com/leaseweb/leaseweb-go-sdk/objectstorage v0.0.1/go.mod h1:6qIK/i6/xVbXUbzDy+CrFzvj98kivnJFmtEGbL7A2tw=
 github.com/leaseweb/leaseweb-go-sdk/publiccloud v0.0.12 h1:PfTSm3YG/MTvenyb65xjATg1azHg4fEvZMPLMz33QKg=
 github.com/leaseweb/leaseweb-go-sdk/publiccloud v0.0.12/go.mod h1:lmeQATXIlBKkyJwVorCbXNOjRS0U9k7yzvjrwbNqZDo=
 github.com/mattn/go-colorable v0.1.9/go.mod h1:u6P/XSegPjTcexA+o6vUJrdnUu04hMope9wVRipJSqc=
