@@ -12,8 +12,8 @@ importers:
         specifier: 21.2.3
         version: 21.2.3(@types/node@26.6.2)(conventional-commits-parser@7.1.2)(typescript@7.0.2)
       '@commitlint/config-conventional':
-        specifier: 20.5.0
-        version: 20.5.0
+        specifier: 21.2.3
+        version: 21.2.3
       '@stoplight/prism-cli':
         specifier: 5.14.2
         version: 5.14.2(supports-color@7.2.0)
@@ -47,10 +47,6 @@ packages:
     resolution: {integrity: sha512-5yOX6IRjcrIReCxpyAd04hgI/yhUMpVBJ/ouwFV0wk9yx5+fYRDWZWJ5h55Tbedgfol+5m2mU5nqzbB8g3v0vQ==}
     engines: {node: '>=22.12.0'}
     hasBin: true
-
-  '@commitlint/config-conventional@20.5.0':
-    resolution: {integrity: sha512-t3Ni88rFw1XMa4nZHgOKJ8fIAT9M2j5TnKyTqJzsxea7FUetlNdYFus9dz+MhIRZmc16P0PPyEfh6X2d/qw8SA==}
-    engines: {node: '>=v18'}
 
   '@commitlint/config-conventional@21.2.3':
     resolution: {integrity: sha512-EP2n5DN2GwRWNVrLX0Jx3mpQlW5PfFi9HnD9OJ8hN/H0xFqpCFyHeGDhg+0P8/21iMMcdkcQgbNqmVklebqYsQ==}
@@ -112,10 +108,6 @@ packages:
     resolution: {integrity: sha512-Y5gmQ+KxzqCrBFJfLvFEPvvwD3LDiNZoTT2yeFBm96M8qhmqSzQc5DvX3rheAaAMjyIvMXOCLS/mWfdpONsjyQ==}
     engines: {node: '>=22.12.0'}
 
-  '@commitlint/types@20.5.0':
-    resolution: {integrity: sha512-ZJoS8oSq2CAZEpc/YI9SulLrdiIyXeHb/OGqGrkUP6Q7YV+0ouNAa7GjqRdXeQPncHQIDz/jbCTlHScvYvO/gA==}
-    engines: {node: '>=v18'}
-
   '@commitlint/types@21.2.3':
     resolution: {integrity: sha512-sGEA473TlCvhCGNoTBY9OXZVWdscIXdGt0dm8EpB+2MRfmt8LNh/X56P/T3nCtEB+eH5qGEa3odphSAoUxSfSQ==}
     engines: {node: '>=22.12.0'}
@@ -172,10 +164,6 @@ packages:
   '@simple-libs/child-process-utils@2.0.0':
     resolution: {integrity: sha512-dvNoRKLijXnD0XoJAz94pbNuB5GQgDr55UhpSPhffDkTT0Cmcqh9jSCOtwfT2d4H6MI9E7c4SgtMuJXZ6F3c6A==}
     engines: {node: '>=22'}
-
-  '@simple-libs/stream-utils@1.2.0':
-    resolution: {integrity: sha512-KxXvfapcixpz6rVEB6HPjOUZT22yN6v0vI0urQSk1L8MlEWPDFCZkhw2xmkyoTGYeFw7tWTZd7e3lVzRZRN/EA==}
-    engines: {node: '>=18'}
 
   '@simple-libs/stream-utils@2.0.0':
     resolution: {integrity: sha512-fCTuZK4QBa+39Oz9l4OGfJfz+GpwCp3AqO7Zch3to99xHPgstVsRFpeQ8LNd2o1Gv8raL2mCFwiaHh7bFSp5DQ==}
@@ -467,9 +455,6 @@ packages:
     resolution: {integrity: sha512-VipTB0gXgGIFO2Rg9yEVN5wLt2AurJcZqDbgmYSwPwsykhLrQhs240/bfceev4w68lI8JshoOJIk9uW7tFzROw==}
     engines: {node: '>=22'}
 
-  array-ify@1.0.0:
-    resolution: {integrity: sha512-c5AMf34bKdvPhQ7tBGhqkgKNUzMr4WUs+WDtC2ZUGOUncbxKMTvqxYctiseW3+L4bA8ec+GcZ6/A/FW4m8ukng==}
-
   atomic-sleep@1.0.0:
     resolution: {integrity: sha512-kNOjDqAh7px0XWNI+4QbzoiR/nTkHAWNud2uvnJquD1/x5a7EQZMJT0AczqK0Qn67oY/TTQ1LbUKajZpp3I9tQ==}
     engines: {node: '>=8.0.0'}
@@ -564,9 +549,6 @@ packages:
     resolution: {integrity: sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==}
     engines: {node: '>= 12'}
 
-  compare-func@2.0.0:
-    resolution: {integrity: sha512-zHig5N+tPWARooBnb0Zx1MFcdfpyJrfTJ3Y5L+IFvUm8rM74hHz66z0gw0x4tijh5CorKkKUCnW82R2vmpeCRA==}
-
   compute-gcd@1.2.1:
     resolution: {integrity: sha512-TwMbxBNz0l71+8Sc4czv13h4kEqnchV9igQZBi6QUaz09dnz13juGnnaWWJTRsP3brxOoxeB4SA2WELLw1hCtg==}
 
@@ -584,15 +566,6 @@ packages:
   conventional-changelog-conventionalcommits@10.4.0:
     resolution: {integrity: sha512-Rriac6ZrAlVm6cy9Bz4NSp+WMHpwNXoPIYex+HjCgduAVUSbnew29DQjQw0C4g9u3HtSYzGiGY+pdBXAZo+4aA==}
     engines: {node: '>=22'}
-
-  conventional-changelog-conventionalcommits@9.3.1:
-    resolution: {integrity: sha512-dTYtpIacRpcZgrvBYvBfArMmK2xvIpv2TaxM0/ZI5CBtNUzvF2x0t15HsbRABWprS6UPmvj+PzHVjSx4qAVKyw==}
-    engines: {node: '>=18'}
-
-  conventional-commits-parser@6.4.0:
-    resolution: {integrity: sha512-tvRg7FIBNlyPzjdG8wWRlPHQJJHI7DylhtRGeU9Lq+JuoPh5BKpPRX83ZdLrvXuOSu5Eo/e7SzOQhU4Hd2Miuw==}
-    engines: {node: '>=18'}
-    hasBin: true
 
   conventional-commits-parser@7.1.2:
     resolution: {integrity: sha512-O+x4N2yH+ijvqWlIyTHsXTAP+algNWgGbjY2duCe8w2vUMvUB95cLRslCPfTMQyLAKlet3bhZTdu6ozn4M+QJQ==}
@@ -641,10 +614,6 @@ packages:
 
   devlop@1.1.0:
     resolution: {integrity: sha512-RWmIqhcFf1lRYBvNmr7qTNuyCt/7/ns2jbpp1+PalgE/rDQcBT0fioSMUpJ93irlUhC5hrg4cYqe6U+0ImW0rA==}
-
-  dot-prop@5.3.0:
-    resolution: {integrity: sha512-QM8q3zDe58hqUqjraQOmzZ1LIH9SWQJTlEKCH4kJ2oQvLZk7RbQXvtDM2XEq3fwkV9CCvvH4LA0AV+ogFsBM2Q==}
-    engines: {node: '>=8'}
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -900,10 +869,6 @@ packages:
     resolution: {integrity: sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==}
     engines: {node: '>=0.12.0'}
 
-  is-obj@2.0.0:
-    resolution: {integrity: sha512-drqDG3cbczxxEJRoOXcOjtdp1J/lyp1mNn0xaznRs8+muBhgQcrnbspox5X5fOw0HnMnbfDzvnEMEtqDEJEo8w==}
-    engines: {node: '>=8'}
-
   is-plain-obj@4.1.0:
     resolution: {integrity: sha512-+Pgi+vMuUNkJyExiMBt5IlFoMyKnr5zhJ4Uspz58WOhBF5QoIZkFyNHIbBAtHwzVAgk5RtndVNsDRN61/mmDqg==}
     engines: {node: '>=12'}
@@ -1041,10 +1006,6 @@ packages:
   media-typer@0.3.0:
     resolution: {integrity: sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==}
     engines: {node: '>= 0.6'}
-
-  meow@13.2.0:
-    resolution: {integrity: sha512-pxQJQzB6djGPXh08dacEloMFopsOqGVRKFPYvPOt9XDZ1HasbgDZA74CJGreSU4G3Ak7EFJGoiH2auq+yXISgA==}
-    engines: {node: '>=18'}
 
   micri@4.5.1:
     resolution: {integrity: sha512-AtvnSBGFglNr+iqs5gufpHT9xRXUabgu9vYEnQYPXSBs+nLSBvmUS5Mzg+3LJ9eQBrNA1o5M49WeqiX1f+d2sg==}
@@ -1569,11 +1530,6 @@ snapshots:
       - conventional-commits-parser
       - typescript
 
-  '@commitlint/config-conventional@20.5.0':
-    dependencies:
-      '@commitlint/types': 20.5.0
-      conventional-changelog-conventionalcommits: 9.3.1
-
   '@commitlint/config-conventional@21.2.3':
     dependencies:
       '@commitlint/types': 21.2.3
@@ -1662,11 +1618,6 @@ snapshots:
     dependencies:
       escalade: 3.2.0
 
-  '@commitlint/types@20.5.0':
-    dependencies:
-      conventional-commits-parser: 6.4.0
-      picocolors: 1.1.1
-
   '@commitlint/types@21.2.3':
     dependencies:
       conventional-commits-parser: 7.1.2
@@ -1705,8 +1656,6 @@ snapshots:
   '@simple-libs/child-process-utils@2.0.0':
     dependencies:
       '@simple-libs/stream-utils': 2.0.0
-
-  '@simple-libs/stream-utils@1.2.0': {}
 
   '@simple-libs/stream-utils@2.0.0': {}
 
@@ -2073,8 +2022,6 @@ snapshots:
 
   argue-cli@3.2.0: {}
 
-  array-ify@1.0.0: {}
-
   atomic-sleep@1.0.0: {}
 
   balanced-match@4.0.4: {}
@@ -2166,11 +2113,6 @@ snapshots:
 
   commander@8.3.0: {}
 
-  compare-func@2.0.0:
-    dependencies:
-      array-ify: 1.0.0
-      dot-prop: 5.3.0
-
   compute-gcd@1.2.1:
     dependencies:
       validate.io-array: 1.0.6
@@ -2193,15 +2135,6 @@ snapshots:
   conventional-changelog-conventionalcommits@10.4.0:
     dependencies:
       '@conventional-changelog/template': 1.4.0
-
-  conventional-changelog-conventionalcommits@9.3.1:
-    dependencies:
-      compare-func: 2.0.0
-
-  conventional-commits-parser@6.4.0:
-    dependencies:
-      '@simple-libs/stream-utils': 1.2.0
-      meow: 13.2.0
 
   conventional-commits-parser@7.1.2:
     dependencies:
@@ -2247,10 +2180,6 @@ snapshots:
   devlop@1.1.0:
     dependencies:
       dequal: 2.0.3
-
-  dot-prop@5.3.0:
-    dependencies:
-      is-obj: 2.0.0
 
   dunder-proto@1.0.1:
     dependencies:
@@ -2472,8 +2401,6 @@ snapshots:
 
   is-number@7.0.0: {}
 
-  is-obj@2.0.0: {}
-
   is-plain-obj@4.1.0: {}
 
   is-unsafe@2.0.2: {}
@@ -2630,8 +2557,6 @@ snapshots:
   mdurl@2.1.0: {}
 
   media-typer@0.3.0: {}
-
-  meow@13.2.0: {}
 
   micri@4.5.1:
     dependencies:
