@@ -4649,3 +4649,60 @@ func TestAccObjectStorageObjectStoragesDataSource(t *testing.T) {
 		})
 	})
 }
+
+func TestAccObjectStorageUserResource(t *testing.T) {
+	t.Run("creates and updates a user", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				// Create and Read testing
+				{
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_user" "test" {
+					  object_storage_id = "12316650"
+					  full_name         = "testUser"
+					  unique_name       = "user/testUser"
+					  groups            = ["5e479608-e62d-4936-9095-6f3be82b564e"]
+					}
+					`,
+					Check: resource.ComposeAggregateTestCheckFunc(
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_user.test",
+							"id",
+							"c7e4a1f2-8b3d-4e9c-a5f7-2d6b9e0c1a83",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_user.test",
+							"full_name",
+							"testUser",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_user.test",
+							"unique_name",
+							"user/testUser",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_user.test",
+							"groups.#",
+							"1",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_user.test",
+							"groups.0",
+							"5e479608-e62d-4936-9095-6f3be82b564e",
+						),
+					),
+				},
+				// ImportState testing
+				{
+					ResourceName:      "leaseweb_object_storage_user.test",
+					ImportState:       true,
+					ImportStateVerify: true,
+					ImportStateId:     "12316650,c7e4a1f2-8b3d-4e9c-a5f7-2d6b9e0c1a83",
+				},
+			},
+
+			// Delete testing automatically occurs in TestCase
+		})
+	})
+}
