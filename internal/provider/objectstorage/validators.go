@@ -2,7 +2,19 @@ package objectstorage
 
 import "regexp"
 
+// Validation messages shown against a Terraform attribute. They are declared
+// here so that each wording lives in one place, rather than being repeated
+// wherever it is reported.
+const (
+	bucketNameMessage = "must start and end with an alphanumeric character and may only contain alphanumeric characters and hyphens"
+	groupIDMessage    = "must be a group ID"
+	rfc3339Message    = "must be specified using the RFC3339 format (`yyyy-mm-ddThh:mm:ssZ`)"
+)
+
 var (
+	// bucketNameRegex matches the bucket names the API accepts.
+	bucketNameRegex = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9]$`)
+
 	// uuidRegex matches the group identifiers the API accepts, which it
 	// documents as `format: uuid`.
 	uuidRegex = regexp.MustCompile(

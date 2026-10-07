@@ -2,6 +2,7 @@ package objectstorage
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
@@ -159,10 +160,7 @@ func (a accessKeyResource) Schema(
 					stringplanmodifier.RequiresReplace(),
 				},
 				Validators: []validator.String{
-					stringvalidator.RegexMatches(
-						rfc3339Regex,
-						"must be specified using the RFC3339 format (`yyyy-mm-ddThh:mm:ssZ`)",
-					),
+					stringvalidator.RegexMatches(rfc3339Regex, rfc3339Message),
 				},
 			},
 			"display_name": schema.StringAttribute{
@@ -217,7 +215,7 @@ func (a accessKeyResource) Create(
 			response.Diagnostics.AddAttributeError(
 				path.Root("expires_at"),
 				"Invalid date and time",
-				"Attribute expires_at must be specified using the RFC3339 format (`yyyy-mm-ddThh:mm:ssZ`)",
+				fmt.Sprintf("Attribute expires_at %s", rfc3339Message),
 			)
 			return
 		}
