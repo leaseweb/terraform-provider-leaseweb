@@ -4649,3 +4649,202 @@ func TestAccObjectStorageObjectStoragesDataSource(t *testing.T) {
 		})
 	})
 }
+
+func TestAccObjectStorageUserResource(t *testing.T) {
+	t.Run("creates and updates a user", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				// Create and Read testing
+				{
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_user" "test" {
+					  object_storage_id = "12316650"
+					  full_name         = "testUser"
+					  unique_name       = "user/testUser"
+					  groups            = ["5e479608-e62d-4936-9095-6f3be82b564e"]
+					}
+					`,
+					Check: resource.ComposeAggregateTestCheckFunc(
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_user.test",
+							"id",
+							"c7e4a1f2-8b3d-4e9c-a5f7-2d6b9e0c1a83",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_user.test",
+							"full_name",
+							"testUser",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_user.test",
+							"unique_name",
+							"user/testUser",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_user.test",
+							"groups.#",
+							"1",
+						),
+						resource.TestCheckResourceAttr(
+							"leaseweb_object_storage_user.test",
+							"groups.0",
+							"5e479608-e62d-4936-9095-6f3be82b564e",
+						),
+					),
+				},
+				// ImportState testing
+				{
+					ResourceName:      "leaseweb_object_storage_user.test",
+					ImportState:       true,
+					ImportStateVerify: true,
+					ImportStateId:     "12316650,c7e4a1f2-8b3d-4e9c-a5f7-2d6b9e0c1a83",
+				},
+				// Update and Read testing
+				{
+					ConfigPlanChecks: resource.ConfigPlanChecks{
+						PreApply: []plancheck.PlanCheck{
+							plancheck.ExpectResourceAction(
+								"leaseweb_object_storage_user.test",
+								plancheck.ResourceActionUpdate,
+							),
+						},
+					},
+					// Ignore the inconsistent result as prism returns the old result.
+					ExpectError: regexp.MustCompile(
+						"Provider produced inconsistent result after apply",
+					),
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_user" "test" {
+					  object_storage_id = "12316650"
+					  full_name         = "renamedUser"
+					  unique_name       = "user/testUser"
+					  groups            = ["5e479608-e62d-4936-9095-6f3be82b564e"]
+					}
+					`,
+				},
+			},
+
+			// Delete testing automatically occurs in TestCase
+		})
+	})
+
+	t.Run("updating groups is done in place", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_user" "test" {
+					  object_storage_id = "12316650"
+					  full_name         = "testUser"
+					  unique_name       = "user/testUser"
+					  groups            = ["5e479608-e62d-4936-9095-6f3be82b564e"]
+					}
+					`,
+				},
+				{
+					ConfigPlanChecks: resource.ConfigPlanChecks{
+						PreApply: []plancheck.PlanCheck{
+							plancheck.ExpectResourceAction(
+								"leaseweb_object_storage_user.test",
+								plancheck.ResourceActionUpdate,
+							),
+						},
+					},
+					// Ignore the inconsistent result as prism returns the old result.
+					ExpectError: regexp.MustCompile(
+						"Provider produced inconsistent result after apply",
+					),
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_user" "test" {
+					  object_storage_id = "12316650"
+					  full_name         = "testUser"
+					  unique_name       = "user/testUser"
+					  groups            = ["3f8fad42-73c1-4b5a-9d23-8e1f2c47b890"]
+					}
+					`,
+				},
+			},
+		})
+	})
+
+	// unique_name is absent from the update payload, so it can only change by
+	// replacing the user.
+	t.Run("updating unique_name triggers replacement", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_user" "test" {
+					  object_storage_id = "12316650"
+					  full_name         = "testUser"
+					  unique_name       = "user/testUser"
+					  groups            = ["5e479608-e62d-4936-9095-6f3be82b564e"]
+					}
+					`,
+				},
+				{
+					ConfigPlanChecks: resource.ConfigPlanChecks{
+						PreApply: []plancheck.PlanCheck{
+							plancheck.ExpectResourceAction(
+								"leaseweb_object_storage_user.test",
+								plancheck.ResourceActionDestroyBeforeCreate,
+							),
+						},
+					},
+					// Ignore the inconsistent result as prism returns the old result.
+					ExpectError: regexp.MustCompile(
+						"Provider produced inconsistent result after apply",
+					),
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_user" "test" {
+					  object_storage_id = "12316650"
+					  full_name         = "testUser"
+					  unique_name       = "user/renamedUser"
+					  groups            = ["5e479608-e62d-4936-9095-6f3be82b564e"]
+					}
+					`,
+				},
+			},
+		})
+	})
+
+	// object_storage_id is a path parameter, so the user cannot be moved.
+	t.Run("updating object_storage_id triggers replacement", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_user" "test" {
+					  object_storage_id = "12316650"
+					  full_name         = "testUser"
+					  unique_name       = "user/testUser"
+					  groups            = ["5e479608-e62d-4936-9095-6f3be82b564e"]
+					}
+					`,
+				},
+				{
+					ConfigPlanChecks: resource.ConfigPlanChecks{
+						PreApply: []plancheck.PlanCheck{
+							plancheck.ExpectResourceAction(
+								"leaseweb_object_storage_user.test",
+								plancheck.ResourceActionDestroyBeforeCreate,
+							),
+						},
+					},
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_user" "test" {
+					  object_storage_id = "12316651"
+					  full_name         = "testUser"
+					  unique_name       = "user/testUser"
+					  groups            = ["5e479608-e62d-4936-9095-6f3be82b564e"]
+					}
+					`,
+				},
+			},
+		})
+	})
+}
