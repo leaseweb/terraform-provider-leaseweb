@@ -2,6 +2,8 @@ package objectstorage
 
 import (
 	"context"
+	"errors"
+	"net/http"
 	"testing"
 	"time"
 
@@ -9,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/leaseweb/leaseweb-go-sdk/objectstorage"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_adaptBucketToBucketResource(t *testing.T) {
@@ -101,5 +104,163 @@ func Test_adaptNullableTimeToStringValue(t *testing.T) {
 		got := adaptNullableTimeToStringValue(nil)
 
 		assert.True(t, got.IsNull())
+	})
+}
+
+// stubBucketListAPI serves a canned sequence of bucket lists so the deletion
+// poll can be driven without real API calls or real waiting. Embedding the
+// interface leaves every other method unimplemented, so an unexpected call
+// panics rather than silently succeeding.
+type stubBucketListAPI struct {
+	objectstorage.ObjectstorageAPI
+	responses [][]objectstorage.Bucket
+	err       error
+	calls     int
+}
+
+func (s *stubBucketListAPI) GetObjectStorageBucketList(
+	_ context.Context,
+	_ string,
+) objectstorage.ApiGetObjectStorageBucketListRequest {
+	return objectstorage.ApiGetObjectStorageBucketListRequest{ApiService: s}
+}
+
+func (s *stubBucketListAPI) GetObjectStorageBucketListExecute(
+	_ objectstorage.ApiGetObjectStorageBucketListRequest,
+) (*objectstorage.GetObjectStorageBucketListResult, *http.Response, error) {
+	s.calls++
+
+	if s.err != nil {
+		return nil, &http.Response{StatusCode: 500, Body: http.NoBody}, s.err
+	}
+
+	// The last response repeats, so a test can poll indefinitely.
+	i := min(s.calls-1, len(s.responses)-1)
+
+	result := objectstorage.NewGetObjectStorageBucketListResult()
+	result.SetBuckets(s.responses[i])
+
+	return result, &http.Response{StatusCode: 200}, nil
+}
+
+func newTestBucketResource(api objectstorage.ObjectstorageAPI) bucketResource {
+	bucket := bucketResource{
+		deletionPollInterval: time.Millisecond,
+		deletionMaxRetries:   3,
+	}
+	bucket.ObjectstorageAPI = api
+
+	return bucket
+}
+
+func beingDeletedBucket(name string, isBeingDeleted bool) []objectstorage.Bucket {
+	return []objectstorage.Bucket{
+		{
+			Name:           objectstorage.PtrString(name),
+			IsBeingDeleted: objectstorage.PtrBool(isBeingDeleted),
+		},
+	}
+}
+
+func Test_bucketResource_waitUntilBucketDeleted(t *testing.T) {
+	t.Run("returns as soon as the bucket is gone", func(t *testing.T) {
+		api := &stubBucketListAPI{responses: [][]objectstorage.Bucket{{}}}
+		diags := diag.Diagnostics{}
+
+		err := newTestBucketResource(api).
+			waitUntilBucketDeleted(context.TODO(), "objectStorageId", "my-bucket", &diags)
+
+		require.NoError(t, err)
+		assert.False(t, diags.HasError())
+		assert.Equal(t, 1, api.calls)
+	})
+
+	// The API flags a bucket while its removal is in flight, so the poll is
+	// equally done once that flag clears.
+	t.Run("returns once the bucket stops reporting itself as being deleted", func(t *testing.T) {
+		api := &stubBucketListAPI{
+			responses: [][]objectstorage.Bucket{beingDeletedBucket("my-bucket", false)},
+		}
+		diags := diag.Diagnostics{}
+
+		err := newTestBucketResource(api).
+			waitUntilBucketDeleted(context.TODO(), "objectStorageId", "my-bucket", &diags)
+
+		require.NoError(t, err)
+		assert.Equal(t, 1, api.calls)
+	})
+
+	t.Run("keeps polling while the bucket is still being deleted", func(t *testing.T) {
+		api := &stubBucketListAPI{
+			responses: [][]objectstorage.Bucket{
+				beingDeletedBucket("my-bucket", true),
+				beingDeletedBucket("my-bucket", true),
+				{},
+			},
+		}
+		diags := diag.Diagnostics{}
+
+		err := newTestBucketResource(api).
+			waitUntilBucketDeleted(context.TODO(), "objectStorageId", "my-bucket", &diags)
+
+		require.NoError(t, err)
+		assert.False(t, diags.HasError())
+		assert.Equal(t, 3, api.calls)
+	})
+
+	// Another bucket being deleted at the same time must not end this poll.
+	t.Run("ignores other buckets in the list", func(t *testing.T) {
+		api := &stubBucketListAPI{
+			responses: [][]objectstorage.Bucket{beingDeletedBucket("another-bucket", true)},
+		}
+		diags := diag.Diagnostics{}
+
+		err := newTestBucketResource(api).
+			waitUntilBucketDeleted(context.TODO(), "objectStorageId", "my-bucket", &diags)
+
+		require.NoError(t, err)
+		assert.Equal(t, 1, api.calls)
+	})
+
+	t.Run("gives up once the retry limit is reached", func(t *testing.T) {
+		api := &stubBucketListAPI{
+			responses: [][]objectstorage.Bucket{beingDeletedBucket("my-bucket", true)},
+		}
+		diags := diag.Diagnostics{}
+
+		err := newTestBucketResource(api).
+			waitUntilBucketDeleted(context.TODO(), "objectStorageId", "my-bucket", &diags)
+
+		require.ErrorContains(t, err, `timed out waiting for bucket "my-bucket" to be deleted`)
+		assert.Equal(t, 3, api.calls)
+	})
+
+	t.Run("reports an error from the API", func(t *testing.T) {
+		api := &stubBucketListAPI{err: errors.New("boom")}
+		diags := diag.Diagnostics{}
+
+		err := newTestBucketResource(api).
+			waitUntilBucketDeleted(context.TODO(), "objectStorageId", "my-bucket", &diags)
+
+		require.ErrorContains(t, err, "could not determine deletion status")
+		assert.True(t, diags.HasError())
+		assert.Equal(t, 1, api.calls)
+	})
+
+	// A cancelled apply must not keep polling for the remaining retries.
+	t.Run("stops when the context is cancelled", func(t *testing.T) {
+		api := &stubBucketListAPI{
+			responses: [][]objectstorage.Bucket{beingDeletedBucket("my-bucket", true)},
+		}
+		diags := diag.Diagnostics{}
+
+		ctx, cancel := context.WithCancel(context.Background())
+		cancel()
+
+		err := newTestBucketResource(api).
+			waitUntilBucketDeleted(ctx, "objectStorageId", "my-bucket", &diags)
+
+		require.ErrorIs(t, err, context.Canceled)
+		assert.Equal(t, 1, api.calls)
 	})
 }

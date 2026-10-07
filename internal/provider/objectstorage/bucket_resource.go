@@ -2,7 +2,6 @@ package objectstorage
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -107,6 +106,11 @@ func adaptBucketToBucketResource(
 
 type bucketResource struct {
 	utils.ResourceAPI
+
+	// Cadence of the asynchronous deletion poll. Held on the resource so that
+	// tests can drive the loop without waiting on real time.
+	deletionPollInterval time.Duration
+	deletionMaxRetries   int
 }
 
 // getBucket looks a bucket up by name. The API exposes no endpoint to fetch a
@@ -419,17 +423,18 @@ func (b bucketResource) waitUntilBucketDeleted(
 	name string,
 	diags *diag.Diagnostics,
 ) error {
-	// Create a constant backoff with a 10-second retry interval
-	bo := backoff.NewConstantBackOff(10 * time.Second)
+	bo := backoff.NewConstantBackOff(b.deletionPollInterval)
 
-	// Set the retry limit to 30 retries (5 minutes total)
 	retryCount := 0
-	maxRetries := 30
 
 	// Start polling and retrying
 	for {
-		if retryCount >= maxRetries {
-			return errors.New("timed out waiting for bucket to be deleted after 5 minutes")
+		if retryCount >= b.deletionMaxRetries {
+			return fmt.Errorf(
+				"timed out waiting for bucket %q to be deleted after %s",
+				name,
+				time.Duration(b.deletionMaxRetries)*b.deletionPollInterval,
+			)
 		}
 
 		sdkBucket := b.getBucket(ctx, objectStorageID, name, diags)
@@ -463,5 +468,7 @@ func NewBucketResource() resource.Resource {
 		ResourceAPI: utils.ResourceAPI{
 			Name: "object_storage_bucket",
 		},
+		deletionPollInterval: 10 * time.Second,
+		deletionMaxRetries:   30,
 	}
 }
