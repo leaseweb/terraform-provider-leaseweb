@@ -5,12 +5,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/leaseweb/leaseweb-go-sdk/objectstorage"
@@ -155,6 +157,12 @@ func (a accessKeyResource) Schema(
 				Description: "The date and time the access key expires, in RFC3339 format (`yyyy-mm-ddThh:mm:ssZ`). Omit for a key that does not expire",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
+				},
+				Validators: []validator.String{
+					stringvalidator.RegexMatches(
+						rfc3339Regex,
+						"must be specified using the RFC3339 format (`yyyy-mm-ddThh:mm:ssZ`)",
+					),
 				},
 			},
 			"display_name": schema.StringAttribute{

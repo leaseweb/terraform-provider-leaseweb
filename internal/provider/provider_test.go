@@ -4811,6 +4811,25 @@ func TestAccObjectStorageUserResource(t *testing.T) {
 		})
 	})
 
+	t.Run("a group that is not an ID throws an error", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_user" "test" {
+					  object_storage_id = "12316650"
+					  full_name         = "testUser"
+					  unique_name       = "user/testUser"
+					  groups            = ["not-a-group-id"]
+					}
+					`,
+					ExpectError: regexp.MustCompile("must be a group ID"),
+				},
+			},
+		})
+	})
+
 	// object_storage_id is a path parameter, so the user cannot be moved.
 	t.Run("updating object_storage_id triggers replacement", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
@@ -4843,6 +4862,69 @@ func TestAccObjectStorageUserResource(t *testing.T) {
 					  groups            = ["5e479608-e62d-4936-9095-6f3be82b564e"]
 					}
 					`,
+				},
+			},
+		})
+	})
+}
+
+func TestAccObjectStorageGroupResource(t *testing.T) {
+	t.Run("a display_name over 32 characters throws an error", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_group" "test" {
+					  object_storage_id = "12316650"
+					  display_name      = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+					  unique_name       = "group/allPowerful"
+					}
+					`,
+					ExpectError: regexp.MustCompile(
+						"Attribute display_name string length must be between 1 and 32",
+					),
+				},
+			},
+		})
+	})
+
+	t.Run("an s3_policies value that is not JSON throws an error", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_group" "test" {
+					  object_storage_id = "12316650"
+					  display_name      = "allPowerful"
+					  unique_name       = "group/allPowerful"
+					  s3_policies       = "not json"
+					}
+					`,
+					ExpectError: regexp.MustCompile("Invalid JSON String Value"),
+				},
+			},
+		})
+	})
+}
+
+func TestAccObjectStorageAccessKeyResource(t *testing.T) {
+	t.Run("an invalid expires_at throws an error", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_access_key" "test" {
+					  object_storage_id = "12316650"
+					  user_id           = "c7e4a1f2-8b3d-4e9c-a5f7-2d6b9e0c1a83"
+					  expires_at        = "tralala"
+					}
+					`,
+					ExpectError: regexp.MustCompile(
+						"Attribute expires_at must be specified using the RFC3339 format",
+					),
 				},
 			},
 		})

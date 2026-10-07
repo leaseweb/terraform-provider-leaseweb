@@ -4,12 +4,15 @@ import (
 	"context"
 	"strings"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/leaseweb/leaseweb-go-sdk/objectstorage"
@@ -111,6 +114,9 @@ func (u userResource) Schema(
 			"full_name": schema.StringAttribute{
 				Required:    true,
 				Description: "Full name of the user",
+				Validators: []validator.String{
+					stringvalidator.LengthBetween(1, 128),
+				},
 			},
 			"unique_name": schema.StringAttribute{
 				Required:    true,
@@ -118,11 +124,19 @@ func (u userResource) Schema(
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
+				Validators: []validator.String{
+					stringvalidator.LengthBetween(1, 1024),
+				},
 			},
 			"groups": schema.SetAttribute{
 				ElementType: types.StringType,
 				Required:    true,
 				Description: "IDs of the groups the user belongs to",
+				Validators: []validator.Set{
+					setvalidator.ValueStringsAre(
+						stringvalidator.RegexMatches(uuidRegex, "must be a group ID"),
+					),
+				},
 			},
 		},
 	}
