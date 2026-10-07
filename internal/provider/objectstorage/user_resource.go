@@ -134,7 +134,7 @@ func (u userResource) Schema(
 				Description: "IDs of the groups the user belongs to",
 				Validators: []validator.Set{
 					setvalidator.ValueStringsAre(
-						stringvalidator.RegexMatches(uuidRegex, "must be a group ID"),
+						stringvalidator.RegexMatches(uuidRegex, groupIDMessage),
 					),
 				},
 			},
