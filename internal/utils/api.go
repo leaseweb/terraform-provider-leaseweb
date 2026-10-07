@@ -10,6 +10,7 @@ import (
 	"github.com/leaseweb/leaseweb-go-sdk/dedicatedserver/v2"
 	"github.com/leaseweb/leaseweb-go-sdk/dns"
 	"github.com/leaseweb/leaseweb-go-sdk/ipmgmt"
+	"github.com/leaseweb/leaseweb-go-sdk/objectstorage"
 	"github.com/leaseweb/leaseweb-go-sdk/publiccloud"
 	"github.com/leaseweb/terraform-provider-leaseweb/internal/provider/client"
 )
@@ -49,6 +50,7 @@ type ResourceAPI struct {
 	DedicatedserverAPI dedicatedserver.DedicatedserverAPI
 	DNSAPI             dns.DnsAPI
 	IPmgmtAPI          ipmgmt.IpmgmtAPI
+	ObjectstorageAPI   objectstorage.ObjectstorageAPI
 }
 
 func (p *ResourceAPI) Configure(
@@ -65,6 +67,7 @@ func (p *ResourceAPI) Configure(
 	p.DedicatedserverAPI = coreClient.DedicatedserverAPI
 	p.DNSAPI = coreClient.DNSAPI
 	p.IPmgmtAPI = coreClient.IPmgmtAPI
+	p.ObjectstorageAPI = coreClient.ObjectstorageAPI
 }
 
 func (p *ResourceAPI) Metadata(
@@ -82,6 +85,7 @@ type DataSourceAPI struct {
 	DedicatedserverAPI dedicatedserver.DedicatedserverAPI
 	DNSAPI             dns.DnsAPI
 	IPmgmtAPI          ipmgmt.IpmgmtAPI
+	ObjectstorageAPI   objectstorage.ObjectstorageAPI
 }
 
 func (d *DataSourceAPI) Configure(
@@ -98,6 +102,7 @@ func (d *DataSourceAPI) Configure(
 	d.PubliccloudAPI = coreClient.PubliccloudAPI
 	d.DNSAPI = coreClient.DNSAPI
 	d.IPmgmtAPI = coreClient.IPmgmtAPI
+	d.ObjectstorageAPI = coreClient.ObjectstorageAPI
 }
 
 func (d *DataSourceAPI) Metadata(
