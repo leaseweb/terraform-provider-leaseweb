@@ -2,13 +2,13 @@ package objectstorage
 
 import "regexp"
 
-// Validation messages shown against a Terraform attribute. They are declared
-// here so that each wording lives in one place, rather than being repeated
-// wherever it is reported.
+// Validation messages shown against a Terraform attribute. They are exported
+// so that the acceptance tests assert against the same value the schema
+// reports, rather than a copy that can drift from it.
 const (
-	bucketNameMessage = "must start and end with an alphanumeric character and may only contain alphanumeric characters and hyphens"
-	groupIDMessage    = "must be a group ID"
-	rfc3339Message    = "must be specified using the RFC3339 format (`yyyy-mm-ddThh:mm:ssZ`)"
+	BucketNameMessage = "must start and end with an alphanumeric character and may only contain alphanumeric characters and hyphens"
+	GroupIDMessage    = "must be a group ID"
+	RFC3339Message    = "must be specified using the RFC3339 format (`yyyy-mm-ddThh:mm:ssZ`)"
 )
 
 var (
