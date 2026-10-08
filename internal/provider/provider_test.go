@@ -15,6 +15,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/leaseweb/terraform-provider-leaseweb/internal/provider/dedicatedserver"
+	"github.com/leaseweb/terraform-provider-leaseweb/internal/provider/dns"
+	"github.com/leaseweb/terraform-provider-leaseweb/internal/provider/ipmgmt"
 	"github.com/leaseweb/terraform-provider-leaseweb/internal/provider/objectstorage"
 	"github.com/stretchr/testify/assert"
 )
@@ -3544,7 +3546,7 @@ func TestAccDNSResourceRecordSetResource(t *testing.T) {
 									type = "A"
 						        }`,
 					ExpectError: regexp.MustCompile(
-						"Attribute name must end in ., got: name",
+						messagePattern("Attribute name " + dns.RecordNameMessage),
 					),
 				},
 			},
@@ -4461,7 +4463,7 @@ func TestAccIpmgmtNullRouteResource(t *testing.T) {
 					}
 					`,
 					ExpectError: regexp.MustCompile(
-						"Attribute automatic_unnulling_at must be specified using the RFC3339 format",
+						messagePattern("Attribute automatic_unnulling_at " + ipmgmt.AutomaticUnnullingAtMessage),
 					),
 				},
 			},

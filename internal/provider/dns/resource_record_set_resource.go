@@ -3,7 +3,6 @@ package dns
 import (
 	"context"
 	"fmt"
-	"regexp"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/int32validator"
@@ -129,7 +128,7 @@ func (r *resourceRecordSetResource) Schema(
 				Description: "Name of the resource record set. " + warningError,
 				Validators: []validator.String{
 					stringvalidator.LengthAtLeast(1),
-					stringvalidator.RegexMatches(regexp.MustCompile(`^.*\.$`), "must end in ."),
+					stringvalidator.RegexMatches(recordNameRegex, RecordNameMessage),
 				},
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
