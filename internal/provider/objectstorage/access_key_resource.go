@@ -2,15 +2,18 @@ package objectstorage
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/leaseweb/leaseweb-go-sdk/objectstorage"
@@ -156,6 +159,9 @@ func (a accessKeyResource) Schema(
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
+				Validators: []validator.String{
+					stringvalidator.RegexMatches(rfc3339Regex, RFC3339Message),
+				},
 			},
 			"display_name": schema.StringAttribute{
 				Computed:    true,
@@ -209,7 +215,7 @@ func (a accessKeyResource) Create(
 			response.Diagnostics.AddAttributeError(
 				path.Root("expires_at"),
 				"Invalid date and time",
-				"Attribute expires_at must be specified using the RFC3339 format (`yyyy-mm-ddThh:mm:ssZ`)",
+				fmt.Sprintf("Attribute expires_at %s", RFC3339Message),
 			)
 			return
 		}
