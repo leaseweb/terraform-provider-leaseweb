@@ -5126,7 +5126,7 @@ func TestAccObjectStorageBucketResource(t *testing.T) {
 					}
 					`,
 					ExpectError: regexp.MustCompile(
-						"must start and end with an alphanumeric character",
+						messagePattern(objectstorage.BucketNameMessage),
 					),
 				},
 			},
