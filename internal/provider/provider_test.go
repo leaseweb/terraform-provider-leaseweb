@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -14,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/leaseweb/terraform-provider-leaseweb/internal/provider/dedicatedserver"
+	"github.com/leaseweb/terraform-provider-leaseweb/internal/provider/objectstorage"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -35,6 +37,13 @@ var (
 		"leaseweb": providerserver.NewProtocol6WithError(New("test")()),
 	}
 )
+
+// messagePattern matches a validation message wherever Terraform wraps it, so
+// a test can assert against the constant the schema reports rather than a
+// copy of the wording.
+func messagePattern(message string) string {
+	return strings.Join(strings.Fields(regexp.QuoteMeta(message)), `\s+`)
+}
 
 func TestLeasewebProvider_Metadata(t *testing.T) {
 	leasewebProvider := New("dev")
@@ -4824,7 +4833,7 @@ func TestAccObjectStorageUserResource(t *testing.T) {
 					  groups            = ["not-a-group-id"]
 					}
 					`,
-					ExpectError: regexp.MustCompile("must be a group ID"),
+					ExpectError: regexp.MustCompile(messagePattern(objectstorage.GroupIDMessage)),
 				},
 			},
 		})
@@ -5030,7 +5039,7 @@ func TestAccObjectStorageAccessKeyResource(t *testing.T) {
 					}
 					`,
 					ExpectError: regexp.MustCompile(
-						"Attribute expires_at must be specified using the RFC3339 format",
+						messagePattern("Attribute expires_at " + objectstorage.RFC3339Message),
 					),
 				},
 			},

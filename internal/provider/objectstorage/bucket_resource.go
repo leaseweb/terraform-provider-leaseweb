@@ -202,7 +202,7 @@ func (b bucketResource) Schema(
 				},
 				Validators: []validator.String{
 					stringvalidator.LengthBetween(3, 63),
-					stringvalidator.RegexMatches(bucketNameRegex, bucketNameMessage),
+					stringvalidator.RegexMatches(bucketNameRegex, BucketNameMessage),
 				},
 			},
 			"is_versioning_enabled": schema.BoolAttribute{

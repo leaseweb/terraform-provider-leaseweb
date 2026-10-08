@@ -160,7 +160,7 @@ func (a accessKeyResource) Schema(
 					stringplanmodifier.RequiresReplace(),
 				},
 				Validators: []validator.String{
-					stringvalidator.RegexMatches(rfc3339Regex, rfc3339Message),
+					stringvalidator.RegexMatches(rfc3339Regex, RFC3339Message),
 				},
 			},
 			"display_name": schema.StringAttribute{
@@ -215,7 +215,7 @@ func (a accessKeyResource) Create(
 			response.Diagnostics.AddAttributeError(
 				path.Root("expires_at"),
 				"Invalid date and time",
-				fmt.Sprintf("Attribute expires_at %s", rfc3339Message),
+				fmt.Sprintf("Attribute expires_at %s", RFC3339Message),
 			)
 			return
 		}
