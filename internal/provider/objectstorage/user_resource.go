@@ -95,7 +95,7 @@ func (u userResource) Schema(
 	response *resource.SchemaResponse,
 ) {
 	response.Schema = schema.Schema{
-		Description: "Manage an object storage user",
+		MarkdownDescription: "Manage an object storage user.\n\n**Note:** every object storage has a built-in `root` user, which cannot be modified or deleted. Importing it produces a resource that errors on update & destroy.",
 		Attributes: map[string]schema.Attribute{
 			"object_storage_id": schema.StringAttribute{
 				Required:    true,
