@@ -2,7 +2,6 @@ package ipmgmt
 
 import (
 	"context"
-	"regexp"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -142,7 +141,7 @@ func (n nullRouteResource) Schema(
 				Computed:    true,
 				Description: "The date and time when the null route is to be deactivated. The date and time should be specified using the `2019-09-08 00:00:00 +0000 UTC` format. If this field is not present then the null route will not be automatically removed",
 				Validators: []validator.String{
-					stringvalidator.RegexMatches(regexp.MustCompile(`^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} \+\d{4} UTC$`), "must be specified using the RFC3339 format (`yyyy-mm-ddThh:mm:ssZ`)"),
+					stringvalidator.RegexMatches(automaticUnnullingAtRegex, AutomaticUnnullingAtMessage),
 				},
 			},
 			"comment": schema.StringAttribute{

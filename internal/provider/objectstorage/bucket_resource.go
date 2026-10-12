@@ -3,7 +3,6 @@ package objectstorage
 import (
 	"context"
 	"fmt"
-	"regexp"
 	"strings"
 	"time"
 
@@ -203,10 +202,7 @@ func (b bucketResource) Schema(
 				},
 				Validators: []validator.String{
 					stringvalidator.LengthBetween(3, 63),
-					stringvalidator.RegexMatches(
-						regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9]$`),
-						"must start and end with an alphanumeric character and may only contain alphanumeric characters and hyphens",
-					),
+					stringvalidator.RegexMatches(bucketNameRegex, BucketNameMessage),
 				},
 			},
 			"is_versioning_enabled": schema.BoolAttribute{
