@@ -4921,6 +4921,28 @@ func TestAccObjectStorageGroupResource(t *testing.T) {
 }
 
 func TestAccObjectStorageAccessKeyResource(t *testing.T) {
+	// The API returns sub-second timestamps but a value is stored back to the
+	// second, so one carrying them would never match what is read back.
+	t.Run("an expires_at with fractional seconds throws an error", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_access_key" "test" {
+					  object_storage_id = "12316650"
+					  user_id           = "c7e4a1f2-8b3d-4e9c-a5f7-2d6b9e0c1a83"
+					  expires_at        = "2026-07-10T13:14:42.500Z"
+					}
+					`,
+					ExpectError: regexp.MustCompile(
+						messagePattern("Attribute expires_at " + objectstorage.RFC3339Message),
+					),
+				},
+			},
+		})
+	})
+
 	t.Run("an invalid expires_at throws an error", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
