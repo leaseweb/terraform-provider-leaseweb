@@ -3,11 +3,14 @@
 page_title: "leaseweb_object_storage_bucket Resource - leaseweb"
 subcategory: ""
 description: |-
+  Warning: This functionality is in BETA. Documentation might be incorrect or incomplete. Functionality might change with the final release.
   Manage an object storage bucket.
   Note: buckets are deleted asynchronously, so terraform destroy waits until the bucket has gone rather than returning as soon as the request is accepted.
 ---
 
 # leaseweb_object_storage_bucket (Resource)
+
+**Warning:** This functionality is in BETA. Documentation might be incorrect or incomplete. Functionality might change with the final release.
 
 Manage an object storage bucket.
 
