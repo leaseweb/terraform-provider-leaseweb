@@ -3,12 +3,15 @@
 page_title: "leaseweb_object_storage_group Resource - leaseweb"
 subcategory: ""
 description: |-
-  Manage an object storage group
+  Warning: This functionality is in BETA. Documentation might be incorrect or incomplete. Functionality might change with the final release.
+  Manage an object storage group.
 ---
 
 # leaseweb_object_storage_group (Resource)
 
-Manage an object storage group
+**Warning:** This functionality is in BETA. Documentation might be incorrect or incomplete. Functionality might change with the final release.
+
+Manage an object storage group.
 
 ## Example Usage
 

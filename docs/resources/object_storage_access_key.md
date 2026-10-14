@@ -3,11 +3,14 @@
 page_title: "leaseweb_object_storage_access_key Resource - leaseweb"
 subcategory: ""
 description: |-
+  Warning: This functionality is in BETA. Documentation might be incorrect or incomplete. Functionality might change with the final release.
   Manage an object storage access key.
   Note: access_key & secret_access_key are only returned when the access key is created. They cannot be retrieved afterwards, so an imported access key has both values set to null.
 ---
 
 # leaseweb_object_storage_access_key (Resource)
+
+**Warning:** This functionality is in BETA. Documentation might be incorrect or incomplete. Functionality might change with the final release.
 
 Manage an object storage access key.
 

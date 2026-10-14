@@ -130,7 +130,7 @@ func (a accessKeyResource) Schema(
 	response *resource.SchemaResponse,
 ) {
 	response.Schema = schema.Schema{
-		MarkdownDescription: "Manage an object storage access key.\n\n**Note:** `access_key` & `secret_access_key` are only returned when the access key is created. They cannot be retrieved afterwards, so an imported access key has both values set to null.",
+		MarkdownDescription: utils.BetaDescription + "\n\nManage an object storage access key.\n\n**Note:** `access_key` & `secret_access_key` are only returned when the access key is created. They cannot be retrieved afterwards, so an imported access key has both values set to null.",
 		Attributes: map[string]schema.Attribute{
 			"object_storage_id": schema.StringAttribute{
 				Required:    true,
