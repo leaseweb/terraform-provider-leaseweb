@@ -4964,9 +4964,80 @@ func TestAccObjectStorageGroupResource(t *testing.T) {
 					ImportStateId:           "12316650,3f8fad42-73c1-4b5a-9d23-8e1f2c47b890",
 					ImportStateVerifyIgnore: []string{"s3_policies"},
 				},
+				// Update and Read testing
+				{
+					ConfigPlanChecks: resource.ConfigPlanChecks{
+						PreApply: []plancheck.PlanCheck{
+							plancheck.ExpectResourceAction(
+								"leaseweb_object_storage_group.test",
+								plancheck.ResourceActionUpdate,
+							),
+						},
+					},
+					// Ignore the inconsistent result as prism returns the old result.
+					ExpectError: regexp.MustCompile(
+						"Provider produced inconsistent result after apply",
+					),
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_group" "test" {
+					  object_storage_id = "12316650"
+					  display_name      = "renamedGroup"
+					  unique_name       = "group/allPowerful"
+					  s3_policies = jsonencode({
+					    Statement = [{ Effect = "Allow", Action = "s3:GetObject", Resource = "arn:aws:s3:::*" }]
+					  })
+					}
+					`,
+				},
 			},
 
 			// Delete testing automatically occurs in TestCase
+		})
+	})
+
+	// unique_name is absent from the update payload, so it can only change by
+	// replacing the group.
+	t.Run("updating unique_name triggers replacement", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_group" "test" {
+					  object_storage_id = "12316650"
+					  display_name      = "allPowerful"
+					  unique_name       = "group/allPowerful"
+					  s3_policies = jsonencode({
+					    Statement = [{ Effect = "Deny", Action = "s3:*", Resource = "arn:aws:s3:::*" }]
+					  })
+					}
+					`,
+				},
+				{
+					ConfigPlanChecks: resource.ConfigPlanChecks{
+						PreApply: []plancheck.PlanCheck{
+							plancheck.ExpectResourceAction(
+								"leaseweb_object_storage_group.test",
+								plancheck.ResourceActionDestroyBeforeCreate,
+							),
+						},
+					},
+					// Ignore the inconsistent result as prism returns the old result.
+					ExpectError: regexp.MustCompile(
+						"Provider produced inconsistent result after apply",
+					),
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_group" "test" {
+					  object_storage_id = "12316650"
+					  display_name      = "allPowerful"
+					  unique_name       = "group/renamed"
+					  s3_policies = jsonencode({
+					    Statement = [{ Effect = "Deny", Action = "s3:*", Resource = "arn:aws:s3:::*" }]
+					  })
+					}
+					`,
+				},
+			},
 		})
 	})
 }
@@ -5131,9 +5202,74 @@ func TestAccObjectStorageBucketResource(t *testing.T) {
 					ImportStateVerify: true,
 					ImportStateId:     "12316650,test-bucket-01",
 				},
+				// Update and Read testing
+				{
+					ConfigPlanChecks: resource.ConfigPlanChecks{
+						PreApply: []plancheck.PlanCheck{
+							plancheck.ExpectResourceAction(
+								"leaseweb_object_storage_bucket.test",
+								plancheck.ResourceActionUpdate,
+							),
+						},
+					},
+					// Ignore the inconsistent result as prism returns the old result.
+					ExpectError: regexp.MustCompile(
+						"Provider produced inconsistent result after apply",
+					),
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_bucket" "test" {
+					  object_storage_id     = "12316650"
+					  name                  = "test-bucket-01"
+					  is_versioning_enabled = false
+					  quota                 = 500
+					}
+					`,
+				},
 			},
 
 			// Delete testing automatically occurs in TestCase
+		})
+	})
+
+	// name is part of the bucket's identity, so it can only change by
+	// replacing the bucket.
+	t.Run("updating name triggers replacement", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_bucket" "test" {
+					  object_storage_id     = "12316650"
+					  name                  = "test-bucket-01"
+					  is_versioning_enabled = true
+					  quota                 = 1000
+					}
+					`,
+				},
+				{
+					ConfigPlanChecks: resource.ConfigPlanChecks{
+						PreApply: []plancheck.PlanCheck{
+							plancheck.ExpectResourceAction(
+								"leaseweb_object_storage_bucket.test",
+								plancheck.ResourceActionDestroyBeforeCreate,
+							),
+						},
+					},
+					// Ignore the inconsistent result as prism returns the old result.
+					ExpectError: regexp.MustCompile(
+						"Provider produced inconsistent result after apply",
+					),
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_bucket" "test" {
+					  object_storage_id     = "12316650"
+					  name                  = "renamed-bucket"
+					  is_versioning_enabled = true
+					  quota                 = 1000
+					}
+					`,
+				},
+			},
 		})
 	})
 
