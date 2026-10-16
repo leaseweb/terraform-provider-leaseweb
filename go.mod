@@ -13,7 +13,7 @@ require (
 	github.com/leaseweb/leaseweb-go-sdk/dedicatedserver/v2 v2.0.5
 	github.com/leaseweb/leaseweb-go-sdk/dns v1.3.0
 	github.com/leaseweb/leaseweb-go-sdk/ipmgmt v1.0.0
-	github.com/leaseweb/leaseweb-go-sdk/objectstorage v0.0.1
+	github.com/leaseweb/leaseweb-go-sdk/objectstorage v0.0.2
 	github.com/leaseweb/leaseweb-go-sdk/publiccloud v0.0.12
 	github.com/stretchr/testify v1.12.1
 )
