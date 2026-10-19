@@ -84,7 +84,7 @@ func (g groupResource) Schema(
 	response *resource.SchemaResponse,
 ) {
 	response.Schema = schema.Schema{
-		Description: "Manage an object storage group",
+		MarkdownDescription: utils.BetaDescription + "\n\nManage an object storage group.",
 		Attributes: map[string]schema.Attribute{
 			"object_storage_id": schema.StringAttribute{
 				Required:    true,
