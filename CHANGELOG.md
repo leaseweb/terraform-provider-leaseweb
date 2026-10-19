@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.32.0](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.31.1...v1.32.0) (2026-10-19)
+
+
+### Features
+
+* add object storage access key resource ([be58696](https://github.com/leaseweb/terraform-provider-leaseweb/commit/be58696d88596d677fe245f25b21b5491a515d26))
+* add object storage bucket resource ([b75daba](https://github.com/leaseweb/terraform-provider-leaseweb/commit/b75dabac767fec86153d3cadd2c0e269269b0c9d))
+* add object storage data source ([d9a323a](https://github.com/leaseweb/terraform-provider-leaseweb/commit/d9a323ac6dca4981c81a2e732125b664ce742213))
+* add object storage group resource ([1c3fcb9](https://github.com/leaseweb/terraform-provider-leaseweb/commit/1c3fcb996f5c15b3bec008e934c1897ffbdc82e0))
+* add object storage user resource ([d997de3](https://github.com/leaseweb/terraform-provider-leaseweb/commit/d997de38e9587d73c10a150897cd85a25e473572))
+* wire object storage SDK into provider client ([6baedc6](https://github.com/leaseweb/terraform-provider-leaseweb/commit/6baedc6a770fc12b1a24f6507cc02fa5c1abe93d))
+
+
+### Bug Fixes
+
+* correct and deduplicate the dns & ipmgmt validation messages ([6cd3cca](https://github.com/leaseweb/terraform-provider-leaseweb/commit/6cd3ccab0d908ec62cbae06605b5aca4a2839e01))
+* log unknown schema action instead of printing it ([5db415a](https://github.com/leaseweb/terraform-provider-leaseweb/commit/5db415a4398f77b71861829bdb7245cafc7ab82e))
+* make every access key attribute except id force replacement ([44a5740](https://github.com/leaseweb/terraform-provider-leaseweb/commit/44a5740900845bbcafc9c0bd12098c9a463d9ca1))
+* raise tools module to Go 1.26 so docs generation works ([6642bad](https://github.com/leaseweb/terraform-provider-leaseweb/commit/6642bad8314013b47fd649877adc5a6264ffb7a5))
+* reject an expires_at carrying fractional seconds ([1a2ee51](https://github.com/leaseweb/terraform-provider-leaseweb/commit/1a2ee516a1bcb2e0fa68cb13d72ad2862c53d232))
+* validate object storage attributes against the API constraints ([73a8887](https://github.com/leaseweb/terraform-provider-leaseweb/commit/73a8887c20056cb95481f2f69f38d6b0b4cad2c9))
+
 ## [1.31.0](https://github.com/leaseweb/terraform-provider-leaseweb/compare/v1.30.0...v1.31.0) (2026-02-20)
 
 
