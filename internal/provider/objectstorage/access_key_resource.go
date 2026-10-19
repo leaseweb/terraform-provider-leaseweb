@@ -146,12 +146,13 @@ func (a accessKeyResource) Schema(
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
+			// None of the computed attributes carry a plan modifier. This
+			// resource can only be replaced, never updated, and a replacement
+			// issues a brand new key, so reusing the prior state would plan the
+			// old credential for a new resource.
 			"id": schema.StringAttribute{
 				Computed:    true,
 				Description: "Access key ID",
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
 			},
 			"expires_at": schema.StringAttribute{
 				Optional:    true,
@@ -167,14 +168,14 @@ func (a accessKeyResource) Schema(
 				Computed:    true,
 				Description: "Name of the access key",
 				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"account_id": schema.StringAttribute{
 				Computed:    true,
 				Description: "ID of the account the access key belongs to",
 				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"access_key": schema.StringAttribute{
@@ -182,7 +183,7 @@ func (a accessKeyResource) Schema(
 				Sensitive:   true,
 				Description: "The access key. Only returned when the access key is created",
 				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"secret_access_key": schema.StringAttribute{
@@ -190,7 +191,7 @@ func (a accessKeyResource) Schema(
 				Sensitive:   true,
 				Description: "The access key secret. Only returned when the access key is created",
 				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
 		},

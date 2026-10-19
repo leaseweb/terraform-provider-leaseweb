@@ -5045,6 +5045,48 @@ func TestAccObjectStorageGroupResource(t *testing.T) {
 func TestAccObjectStorageAccessKeyResource(t *testing.T) {
 	// The API returns sub-second timestamps but a value is stored back to the
 	// second, so one carrying them would never match what is read back.
+	// The key cannot be updated, so any change to a configurable attribute has
+	// to replace it. The computed attributes deliberately carry no
+	// UseStateForUnknown, otherwise the plan would show the previous
+	// credential for what is a brand new key.
+	t.Run("updating expires_at triggers replacement", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_access_key" "test" {
+					  object_storage_id = "12316650"
+					  user_id           = "c7e4a1f2-8b3d-4e9c-a5f7-2d6b9e0c1a83"
+					  expires_at        = "2026-07-10T13:14:42Z"
+					}
+					`,
+				},
+				{
+					ConfigPlanChecks: resource.ConfigPlanChecks{
+						PreApply: []plancheck.PlanCheck{
+							plancheck.ExpectResourceAction(
+								"leaseweb_object_storage_access_key.test",
+								plancheck.ResourceActionDestroyBeforeCreate,
+							),
+						},
+					},
+					// Ignore the inconsistent result as prism returns the old result.
+					ExpectError: regexp.MustCompile(
+						"Provider produced inconsistent result after apply",
+					),
+					Config: providerConfig + `
+					resource "leaseweb_object_storage_access_key" "test" {
+					  object_storage_id = "12316650"
+					  user_id           = "c7e4a1f2-8b3d-4e9c-a5f7-2d6b9e0c1a83"
+					  expires_at        = "2027-01-01T00:00:00Z"
+					}
+					`,
+				},
+			},
+		})
+	})
+
 	t.Run("an expires_at with fractional seconds throws an error", func(t *testing.T) {
 		resource.Test(t, resource.TestCase{
 			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
