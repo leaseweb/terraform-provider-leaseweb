@@ -101,7 +101,13 @@ func (o objectStoragesDataSource) Read(
 ) {
 	var objectStorages []objectstorage.ObjectStorageListItem
 	var offset *int32
-	var state objectStoragesDataSourceModel
+
+	// Initialised rather than declared so that an account without object
+	// storages yields an empty list instead of null, sparing practitioners a
+	// coalesce() around every use of the attribute.
+	state := objectStoragesDataSourceModel{
+		ObjectStorages: []objectStorageDataSourceModel{},
+	}
 
 	objectStorageRequest := o.ObjectstorageAPI.GetObjectStorageList(ctx)
 
