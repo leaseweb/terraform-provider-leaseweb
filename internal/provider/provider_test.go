@@ -5298,9 +5298,12 @@ func TestAccObjectStorageBucketResource(t *testing.T) {
 							),
 						},
 					},
-					// Ignore the inconsistent result as prism returns the old result.
+					// The replacement itself is asserted by the plan check
+					// above. The apply then fails because prism replays a fixed
+					// list which cannot contain the renamed bucket, so reading
+					// it back finds nothing.
 					ExpectError: regexp.MustCompile(
-						"Provider produced inconsistent result after apply",
+						"could not be read back",
 					),
 					Config: providerConfig + `
 					resource "leaseweb_object_storage_bucket" "test" {

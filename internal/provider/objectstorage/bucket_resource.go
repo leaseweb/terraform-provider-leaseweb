@@ -269,18 +269,41 @@ func (b bucketResource) Create(
 		opts.SetQuota(plan.Quota.ValueInt32())
 	}
 
-	sdkBucket, httpResponse, err := b.ObjectstorageAPI.CreateObjectStorageBucket(
+	objectStorageID := plan.ObjectStorageID.ValueString()
+	name := plan.Name.ValueString()
+
+	_, httpResponse, err := b.ObjectstorageAPI.CreateObjectStorageBucket(
 		ctx,
-		plan.ObjectStorageID.ValueString(),
+		objectStorageID,
 	).CreateObjectStorageBucketOpts(*opts).Execute()
 	if err != nil {
 		utils.SdkError(ctx, &response.Diagnostics, err, httpResponse)
 		return
 	}
 
+	// The create response does not carry the bucket, so it is read back from
+	// the list endpoint rather than assumed. Trusting the response left every
+	// field at its zero value, which Terraform reported as an inconsistent
+	// result even though the bucket had been created.
+	sdkBucket := b.getBucket(ctx, objectStorageID, name, &response.Diagnostics)
+	if response.Diagnostics.HasError() {
+		return
+	}
+	if sdkBucket == nil {
+		utils.ReportError(
+			fmt.Sprintf(
+				"Bucket %q was created but could not be read back from object storage %q.",
+				name,
+				objectStorageID,
+			),
+			&response.Diagnostics,
+		)
+		return
+	}
+
 	state := adaptBucketToBucketResource(
 		*sdkBucket,
-		plan.ObjectStorageID.ValueString(),
+		objectStorageID,
 		&response.Diagnostics,
 		ctx,
 	)
@@ -351,19 +374,40 @@ func (b bucketResource) Update(
 		opts.SetQuota(plan.Quota.ValueInt32())
 	}
 
-	sdkBucket, httpResponse, err := b.ObjectstorageAPI.UpdateObjectStorageBucket(
+	objectStorageID := plan.ObjectStorageID.ValueString()
+	name := plan.Name.ValueString()
+
+	_, httpResponse, err := b.ObjectstorageAPI.UpdateObjectStorageBucket(
 		ctx,
-		plan.ObjectStorageID.ValueString(),
-		plan.Name.ValueString(),
+		objectStorageID,
+		name,
 	).UpdateObjectStorageBucketOpts(*opts).Execute()
 	if err != nil {
 		utils.SdkError(ctx, &response.Diagnostics, err, httpResponse)
 		return
 	}
 
+	// Read back for the same reason as Create: the response body cannot be
+	// relied on to describe the bucket.
+	sdkBucket := b.getBucket(ctx, objectStorageID, name, &response.Diagnostics)
+	if response.Diagnostics.HasError() {
+		return
+	}
+	if sdkBucket == nil {
+		utils.ReportError(
+			fmt.Sprintf(
+				"Bucket %q was updated but could not be read back from object storage %q.",
+				name,
+				objectStorageID,
+			),
+			&response.Diagnostics,
+		)
+		return
+	}
+
 	state := adaptBucketToBucketResource(
 		*sdkBucket,
-		plan.ObjectStorageID.ValueString(),
+		objectStorageID,
 		&response.Diagnostics,
 		ctx,
 	)
