@@ -5,7 +5,6 @@ import (
 	"github.com/leaseweb/leaseweb-go-sdk/dedicatedserver/v2"
 	"github.com/leaseweb/leaseweb-go-sdk/dns"
 	"github.com/leaseweb/leaseweb-go-sdk/ipmgmt"
-	"github.com/leaseweb/leaseweb-go-sdk/objectstorage"
 	"github.com/leaseweb/leaseweb-go-sdk/publiccloud"
 )
 
@@ -17,7 +16,6 @@ type Client struct {
 	DedicatedserverAPI dedicatedserver.DedicatedserverAPI
 	DNSAPI             dns.DnsAPI
 	IPmgmtAPI          ipmgmt.IpmgmtAPI
-	ObjectstorageAPI   objectstorage.ObjectstorageAPI
 }
 
 type Optional struct {
@@ -30,21 +28,18 @@ func NewClient(token string, optional Optional, version string) Client {
 	dedicatedserverCFG := dedicatedserver.NewConfiguration()
 	dnsCFG := dns.NewConfiguration()
 	ipmgmtCFG := ipmgmt.NewConfiguration()
-	objectstorageCFG := objectstorage.NewConfiguration()
 
 	if optional.Host != nil {
 		publiccloudCFG.Host = *optional.Host
 		dedicatedserverCFG.Host = *optional.Host
 		dnsCFG.Host = *optional.Host
 		ipmgmtCFG.Host = *optional.Host
-		objectstorageCFG.Host = *optional.Host
 	}
 	if optional.Scheme != nil {
 		publiccloudCFG.Scheme = *optional.Scheme
 		dedicatedserverCFG.Scheme = *optional.Scheme
 		dnsCFG.Scheme = *optional.Scheme
 		ipmgmtCFG.Scheme = *optional.Scheme
-		objectstorageCFG.Scheme = *optional.Scheme
 	}
 
 	userAgent := userAgentBase + "-" + version
@@ -61,20 +56,15 @@ func NewClient(token string, optional Optional, version string) Client {
 	ipmgmtCFG.AddDefaultHeader("X-LSW-Auth", token)
 	ipmgmtCFG.UserAgent = userAgent
 
-	objectstorageCFG.AddDefaultHeader("X-LSW-Auth", token)
-	objectstorageCFG.UserAgent = userAgent
-
 	publiccloudAPI := publiccloud.NewAPIClient(publiccloudCFG)
 	dedicatedserverAPI := dedicatedserver.NewAPIClient(dedicatedserverCFG)
 	dnsAPI := dns.NewAPIClient(dnsCFG)
 	ipmgmtAPI := ipmgmt.NewAPIClient(ipmgmtCFG)
-	objectstorageAPI := objectstorage.NewAPIClient(objectstorageCFG)
 
 	return Client{
 		PubliccloudAPI:     publiccloudAPI.PubliccloudAPI,
 		DedicatedserverAPI: dedicatedserverAPI.DedicatedserverAPI,
 		DNSAPI:             dnsAPI.DnsAPI,
 		IPmgmtAPI:          ipmgmtAPI.IpmgmtAPI,
-		ObjectstorageAPI:   objectstorageAPI.ObjectstorageAPI,
 	}
 }
