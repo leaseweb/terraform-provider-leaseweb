@@ -53,7 +53,7 @@ func (o objectStoragesDataSource) Schema(
 	response *datasource.SchemaResponse,
 ) {
 	response.Schema = schema.Schema{
-		MarkdownDescription: utils.BetaDescription + "\n\nList all object storages.",
+		Description: "List all object storages",
 		Attributes: map[string]schema.Attribute{
 			"object_storages": schema.ListNestedAttribute{
 				Computed: true,

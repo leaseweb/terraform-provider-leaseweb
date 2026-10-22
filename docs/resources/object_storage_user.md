@@ -3,14 +3,11 @@
 page_title: "leaseweb_object_storage_user Resource - leaseweb"
 subcategory: ""
 description: |-
-  Warning: This functionality is in BETA. Documentation might be incorrect or incomplete. Functionality might change with the final release.
   Manage an object storage user.
   Note: every object storage has a built-in root user, which cannot be modified or deleted. Importing it produces a resource that errors on update & destroy.
 ---
 
 # leaseweb_object_storage_user (Resource)
-
-**Warning:** This functionality is in BETA. Documentation might be incorrect or incomplete. Functionality might change with the final release.
 
 Manage an object storage user.
 

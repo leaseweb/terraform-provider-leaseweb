@@ -3,15 +3,12 @@
 page_title: "leaseweb_object_storages Data Source - leaseweb"
 subcategory: ""
 description: |-
-  Warning: This functionality is in BETA. Documentation might be incorrect or incomplete. Functionality might change with the final release.
-  List all object storages.
+  List all object storages
 ---
 
 # leaseweb_object_storages (Data Source)
 
-**Warning:** This functionality is in BETA. Documentation might be incorrect or incomplete. Functionality might change with the final release.
-
-List all object storages.
+List all object storages
 
 ## Example Usage
 

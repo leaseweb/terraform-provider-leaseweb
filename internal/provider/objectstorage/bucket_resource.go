@@ -178,7 +178,7 @@ func (b bucketResource) Schema(
 	response *resource.SchemaResponse,
 ) {
 	response.Schema = schema.Schema{
-		MarkdownDescription: utils.BetaDescription + "\n\nManage an object storage bucket.\n\n**Note:** buckets are deleted asynchronously, so `terraform destroy` waits until the bucket has gone rather than returning as soon as the request is accepted.",
+		MarkdownDescription: "Manage an object storage bucket.\n\n**Note:** buckets are deleted asynchronously, so `terraform destroy` waits until the bucket has gone rather than returning as soon as the request is accepted.",
 		Attributes: map[string]schema.Attribute{
 			"object_storage_id": schema.StringAttribute{
 				Required:    true,
