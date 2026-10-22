@@ -198,6 +198,5 @@ func (p *leasewebProvider) Resources(_ context.Context) []func() resource.Resour
 		ipmgmt.NewNullRouteResource,
 		objectstorage.NewBucketResource,
 		objectstorage.NewGroupResource,
-		objectstorage.NewUserResource,
 	}
 }
