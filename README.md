@@ -84,7 +84,7 @@ before committing anything or the commit will fail.
 
 ### API Stability
 
-All underlying APIs are now stable and production ready. The Terraform plugin is no longer in beta, with the exception of Object Storage, whose API is still in BETA. Its resources and data source are marked accordingly.
+All underlying APIs are now stable and production ready. The Terraform plugin is no longer in beta.
 
 ## Architecture
 
