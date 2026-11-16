@@ -4599,3 +4599,53 @@ func TestAccIpmgmtNullRouteResource(t *testing.T) {
 		})
 	})
 }
+
+func TestAccObjectStorageObjectStoragesDataSource(t *testing.T) {
+	t.Run("lists all object storages", func(t *testing.T) {
+		resource.Test(t, resource.TestCase{
+			ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+			Steps: []resource.TestStep{
+				{
+					Config: providerConfig + `data "leaseweb_object_storages" "test" {}`,
+					Check: resource.ComposeAggregateTestCheckFunc(
+						resource.TestCheckResourceAttr(
+							"data.leaseweb_object_storages.test",
+							"object_storages.#",
+							"2",
+						),
+						resource.TestCheckResourceAttr(
+							"data.leaseweb_object_storages.test",
+							"object_storages.0.id",
+							"12316650",
+						),
+						resource.TestCheckResourceAttr(
+							"data.leaseweb_object_storages.test",
+							"object_storages.0.customer_id",
+							"10085996",
+						),
+						resource.TestCheckResourceAttr(
+							"data.leaseweb_object_storages.test",
+							"object_storages.0.contract_id",
+							"42001021000100",
+						),
+						resource.TestCheckResourceAttr(
+							"data.leaseweb_object_storages.test",
+							"object_storages.0.sales_org_id",
+							"2000",
+						),
+						resource.TestCheckResourceAttr(
+							"data.leaseweb_object_storages.test",
+							"object_storages.0.quantity",
+							"100GB",
+						),
+						resource.TestCheckResourceAttr(
+							"data.leaseweb_object_storages.test",
+							"object_storages.0.region_url",
+							"https://nl.object-storage.io",
+						),
+					),
+				},
+			},
+		})
+	})
+}
