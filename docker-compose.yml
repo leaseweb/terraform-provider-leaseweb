@@ -76,6 +76,17 @@ services:
       - path: .env
     extra_hosts:
       - "host.docker.internal:host-gateway"
+  prism_objectstorage:
+    container_name: prism_objectstorage
+    build:
+      dockerfile: docker/prism/Dockerfile
+    command: >
+      mock -p 4010 --host 0.0.0.0 --multiprocess=false
+      ${OBJECT_STORAGE_API_SPEC_URL}
+    env_file:
+      - path: .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   prism-proxy:
     build:
       dockerfile: docker/caddy/Dockerfile
@@ -88,6 +99,7 @@ services:
       - prism_dedicated_server
       - prism_dns
       - prism_ipmgmt
+      - prism_objectstorage
 
 volumes:
   golang:
